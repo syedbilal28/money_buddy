@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+</head>
+<body>
+    <form method="post" action="{% url 'signup' %}" id="form">
+        {% csrf_token %}
+        {{form.as_p}}
+        <p>Confirm Password<input type="password" id="pass_confirm"></p>
+        
+        <button type="submit" id="submit_button" onclick="auth_confirm">Signup</button>
+    </form>
+<script>
+    document.querySelector("#id_password").type="password"
+    function auth_confirm() {
+        if ($("#id_password").value() === $("#pass_confirm").value()){
+            $("#form").submit()
+        }
+        else{
+            alert("Passwords do not match")
+        }
+    }
+</script>
+</body>
+</html>
