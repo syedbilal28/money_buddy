@@ -1,6 +1,7 @@
 from django.shortcuts import render,HttpResponse,redirect
 from .forms import LoginForm,SignupForm
 from django.contrib.auth import login, logout,authenticate
+from .models import Thread,ChatMessage
 # Create your views here.
 def index(request):
     if request.method=="POST":
@@ -22,7 +23,9 @@ def index(request):
         form = LoginForm()
         return render(request,'index.html',{"form":form})
 def home(request):
-    return HttpResponse("Hello World")
+    threads=Thread.objects.all()
+    context={"Threads":threads}
+    return render(request,"threads.html",context)
 
 def Signup(request):
     if request.method=="POST":
@@ -34,3 +37,8 @@ def Signup(request):
         form = SignupForm()
     return render(request,"signup.html", {"form":form})
     
+def inbox(request,thread_id):
+    thread_=Thread.objects.get(pk=int(thread_id))
+    messages=ChatMessage.objects.filter(thread=thread_)
+    context={"messages":messages}
+    return render(request,'inbox.html',context)

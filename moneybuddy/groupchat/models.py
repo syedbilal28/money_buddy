@@ -1,7 +1,30 @@
 from django.db import models
 from django.contrib.auth.models import User
-# Create your models here.
+from django.conf import settings
+import stripe
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
+# Create your models here.
+stripe.api_key=settings.STRIPE_API_KEY
+class Profile(models.Model):
+    user=models.OneToOneField(User,on_delete=models.CASCADE,primary_key=True)
+    stripe_id=models.CharField(max_length=120)
+
+@receiver(post_save,sender=User)
+def _on_update_user(sender,instance,created,**kwargs):
+    if created:
+        customer=stripe.Customer.create(
+            email=instance.email,
+            name=instance.get_full_name(),
+            metadata={
+                'user_id':instance.pk,
+                'username':instance.username
+            },
+            description="Created from django",
+            )
+        profile=Profile.objects.create(user=instance,stripe_id=customer.id)
+        profile.save()
 
 class ThreadManager(models.Manager):
     def by_user(self, user):
@@ -35,14 +58,16 @@ class ThreadManager(models.Manager):
     
 
 class Thread(models.Model):
+    
     admin= models.ForeignKey(User,on_delete=models.CASCADE,related_name="Admin")
     participants=models.ManyToManyField(User)
+    total_buyout=models.IntegerField(default=0)
     updated = models.DateTimeField(auto_now=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     objects = ThreadManager()
     class Meta:
-        ordering=('-updated',)
+        ordering=('total_buyout',)
     @property
     def room_group_name(self):
         return f'chat_{self.id}'

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+</head>
+<body>
+    {% for thread in Threads %}
+    <div>
+        <h3>{{ thread.admin }}</h3>
+        {% for chat in thread.chatmessage_set.all %}
+
+        <p>{{ chat.message }}</p>
+        {% endfor %}
+        <p>{{ thread.total_buyout }}</p>
+    {% endfor %}
+    </div>
+</body>
+</html>
