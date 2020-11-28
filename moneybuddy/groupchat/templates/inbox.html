@@ -6,10 +6,12 @@
     <title>Inbox</title>
 </head>
 <body>
-    {% for message in messages %}
-    <div>
-        <p>{{ message.message }}</p>
+    <div class="container">
+        {% for message in messages %}
+        <div>
+            <p>{{ message.message }}</p>
+        </div>
+        {% endfor %}    
     </div>
-    {% endfor %}
 </body>
 </html>
