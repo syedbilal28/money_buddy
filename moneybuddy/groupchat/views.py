@@ -24,6 +24,10 @@ def index(request):
         return render(request,'index.html',{"form":form})
 def home(request):
     threads=Thread.objects.all()
+    # Participants=[]
+    # for i in threads:
+    #     Participants.append(len(i.participants))
+    # print(Participants)
     context={"Threads":threads}
     return render(request,"threads.html",context)
 
@@ -42,3 +46,8 @@ def inbox(request,thread_id):
     messages=ChatMessage.objects.filter(thread=thread_)
     context={"messages":messages}
     return render(request,'inbox.html',context)
+def Logout(request):
+    logout(request.user)
+    return redirect ('index')
+def About_us(request):
+    return redirect('home')
