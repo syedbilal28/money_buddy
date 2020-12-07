@@ -3,15 +3,305 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reconnecting-websocket/1.0.0/reconnecting-websocket.js" integrity="sha512-SxQulwFs2B38bmUJtBSo9tD07MDrtCbY8me3AOZ14tRknCPTeMDLvCQV4ekhs8R0o9QPnW5HQanKfveexVcwLA==" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <title>Inbox</title>
+    <style>
+        body{
+            margin:0;
+            padding:0;
+            overflow-y: hidden;
+        }
+        .container{
+            margin:0;
+            padding:0;
+            width:100vw;
+        }
+        nav{
+            background-color: #D26450;
+            position: absolute;
+            height:8.8vh;
+            width:100%;
+            padding-top: 1rem;
+        }
+        nav a{
+            text-decoration: none;
+            /* font-size: 2vmin; */
+            /* font-size: 1.1rem; */
+            color:white;
+            font-weight: 500;
+            /* padding-top: 2rem; */
+        }
+        nav a:hover{
+            text-decoration: none;
+            color:black;
+        }
+        #Logout{
+            padding:0.75rem 1rem;
+            /* margin-top: 1rem; */
+            margin-right: 2rem;
+            background-color: white;
+            float: right;
+            color:#D26450;
+            border-radius: 5rem;
+        }
+        #Logout:hover{
+            color: white;
+            background-color:#D26450;
+        }
+       
+        #logo{
+            padding:0px 1rem;
+            width:5rem;
+            height: 5rem;
+            margin-right: 5rem;
+        }
+        #ChatHolder{
+            position: relative;
+            margin-top:9.7vh;
+            /* border:1px solid black; */
+            width:82vw;
+            height:91.2vh;
+            
+        }
+        
+        #chat-header{
+
+            position:absolute;
+            width:100%;
+            height:9vh;
+            background-color: #e5a59a;
+            padding:1vh 2vw;
+        }
+        
+        .header{
+            display:inline-block;
+            padding:0 2rem;
+        }
+        #participants{
+            position: absolute;
+            float:right;
+            /* top:0px; */
+            padding-top: 2.5rem;;
+        }
+        #add{
+            float:right;
+            margin-top: 2rem;
+            background-color: #a23c2a;
+            border:none;
+        }
+        #Chatbox{
+            /* margin-top:19vh; */
+            position: absolute;
+            margin-top:9vh;
+            padding:0 2vw;
+            width:100%;
+            height: 75%;
+            overflow-y: auto;
+            /* border:1px solid black; */
+        }
+        .chat-message{
+            /* position:absolute; */
+            width:100%;
+            height:7.5vh;
+            border-top: 1px solid #bfbfbf;
+        }
+        .chat-message p{
+            display: inline-block;
+        }
+        .sender{
+            font-size: 2vmin;
+            font-weight: 600;
+            padding-right: 1rem;
+        }
+        .message{
+            font-size: 1.75vmin;
+        }
+        .time{
+            font-size: 1.5vmin;
+        }
+        #form_holder{
+            position: absolute;
+            margin-top: 76.6vh;
+            width:100%;
+            height:15%;
+            /* border:1px solid black; */
+        }
+        #form_holder textarea{
+            margin:2vh 2vw;
+            height:10vh;
+            width:80%;
+            overflow-x: hidden;
+
+        }
+        #form_holder button{
+            position:absolute;
+            bottom:0px;
+            margin-bottom: 2vh;
+            padding:1vh 2vw;
+            background-color:#D26450 ;
+            border:none;
+        }
+        #ads{
+            float:right;
+            margin-top: 10vh;
+        }
+        .row{
+            /* position: absolute; */
+            margin: 0;
+            padding:0;
+            
+            /* border: 1px solid black; */
+            width:18vw;
+            height:45vh;
+        }
+    </style>
 </head>
 <body>
+
     <div class="container">
-        {% for message in messages %}
-        <div>
-            <p>{{ message.message }}</p>
+        <nav>
+            <nav>
+                
+                <a href="{% url 'index' %}" id="logo">Logo</a>
+                <!-- <a href="" id="work">How it Works</a> -->
+                <a href="{% url 'Logout' %}" id="Logout">Logout</a>
+            
+            </nav>
+        </nav>
+        <div id="ads">
+            <div class="row">
+                For ads
+            </div>
+            <div class="row">
+                For ads
+            </div>
         </div>
-        {% endfor %}    
+        <div id="ChatHolder">
+            <div id="chat-header">
+                
+                    
+                        <h3 class="header">Created By: {{ thread.admin }}</h3>
+                        <h4 class="header">Total Buyout: {{ thread.total_buyout }}</h4>
+                        <p class="header" id="participants"> Participants: {{ thread.participants.all.count }}</p>
+                        <button id="add" class="btn btn-primary">Add People</button>
+                       
+                    
+                        
+                    
+            </div>
+            <div id="Chatbox">
+                {% for message in messages %}
+                <div class="chat-message">
+                    <p class="sender">{{ message.user }}</p><span class="time">{{ message.timestamp.time}}</span><br>
+                    <p class="message">{{ message.message }}</p>
+                    
+                </div>
+                {% endfor %}    
+            </div>
+            <div id="form_holder">
+                <form id="form">
+                    <textarea type="text" placeholder="Type a text message" id="chat_message"></textarea>
+                    <input type="hidden" id="myusername" value="{{ user.username }}">
+                    <button type="submit" class="btn btn-primary" >Send</button>
+                </form>
+            </div>
+        </div>
     </div>
+    
+<script>
+    // For window.socket initiation
+    var loc=window.location
+    var wsStart="ws://"
+    
+    if (loc.protocol =="https:"){
+        wsStart="wss://"
+    }
+    // window.socket connection
+    
+    var endpoint=  wsStart+loc.host+loc.pathname
+    
+    
+    if(window.socket){
+        if(window.socket.readyState === WebSocket.OPEN){
+            window.socket.close()
+        }
+    }
+    window.socket= new ReconnectingWebSocket(endpoint)
+    
+    
+    
+    // var chatholder= $("#Chatbox")
+    var form=$("#form")
+    var msg_input=$("#chat_message")
+    
+    // Whenever a window.socket receives message from server
+    window.socket.onmessage=function(e){
+        console.log("message",e.data)
+        var msg_rec=JSON.parse(e.data)
+        
+        msg_rec=JSON.parse(msg_rec.text)
+        add_received_message(msg_rec.message,msg_rec.username)
+    
+    }
+    
+    //When soocket sends data to the the server
+    window.socket.onopen=function(e){
+        console.log("open",e)
+        if($("#chat_message").length >0){
+            form.submit(function(event){
+            console.log("submitted")
+            event.preventDefault()
+            var msgtext=msg_input.val()
+            var me =$("#myusername").val()
+            data={
+                "message":msgtext,
+                'username':me
+            }
+            console.log(data)
+            console.log("message",msgtext)
+            if(msgtext.length >1){
+            window.socket.send(JSON.stringify(data))
+        }
+            form[0].reset()
+
+        })
+        }};
+
+        
+    
+    
+    
+    socket.onerror=function(e){
+        console.log("error",e)
+    }
+    socket.onclose=function(e){
+        console.log("close",e)
+    
+    }
+    
+    function add_received_message(message,user){
+    console.log(message)
+    const chatholder=document.querySelector("#Chatbox")
+    
+    var div = document.createElement("div")
+    
+    div.setAttribute('id', 'test')
+    div.setAttribute('class', 'chat-message')
+    
+    var p = document.createElement("p")
+    p.className="pBlock"
+    
+    
+    var sender=user
+    var text=message   //for id just type message.id        
+    p.innerText=text
+    div.appendChild(p)
+    
+    console.log(div)
+    chatholder.appendChild(div)
+}
+</script>
 </body>
 </html>

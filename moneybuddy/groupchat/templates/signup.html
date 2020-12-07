@@ -1,19 +1,134 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Signup</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
-</head>
-<body>
-    <form method="post" action="{% url 'signup' %}" id="form">
-        {% csrf_token %}
-        {{form.as_p}}
-        <p>Confirm Password<input type="password" id="pass_confirm"></p>
+    <style>
+        body{
+            background-color: #d9d9d9;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 1.75vmin;
+            background-image: url("{% static 'signup_bg.jpg' %}");
+            overflow-x: hidden;
+        }
+        .container{
+            /* position:relative; */
+            /* position: absolute; */
+            height:100vh;
+        }
+        .row{
+            /* position: absolute; */
+           
+            width:85%;
+            border-radius: 1rem;
+            
+            margin:auto;
+            vertical-align: middle;
+            margin-top: 12%;
+            position: relative;
+            height:70%;
+        }
+        #left{
+            /* border:1px solid black; */
+            background-color: #D26450;
+            opacity:0.9;
+            width:40%;
+            border-radius: 1rem 0px 0px 1rem;
+        }
+        .helptext{
+            display: none;
+        }
+        .col-sm{
+            
+            line-height: 2vh;
+            /* width:50%; */
+            float:left;
+            height:100%;
+            padding: 1rem;
+           
+        }
         
-        <button type="submit" id="submit_button" onclick="auth_confirm">Signup</button>
-    </form>
+        #right{
+           background-color: #fff;
+           border-radius: 1rem;
+           width:60%;
+           border-radius: 0px 1rem 1rem 0px;
+           opacity: 0.9;
+        }
+        form{
+            position: absolute;
+            height:100%;
+            
+        }
+        label{
+            display: block;
+        }
+        p{
+            display: inline-block;
+            padding-left: 3rem;
+            padding-top:1vh;
+        }
+        h2{
+            color: #fff;
+            padding:3rem;
+        }
+        #id_email{
+            display:block;
+        }
+        #right h2{
+            color:#D26450;
+        }
+        input{
+            border-radius: 0.25rem;
+            border: 1px solid #d6cece;
+            height:3.8vh;
+            width:18vw;
+        }
+        #submit_button{
+            display: block;
+            margin-left:3rem;
+            margin-top: 3rem;
+            height: 4rem;
+            width: 10rem;
+            background-color: #D26450;
+            border:none;
+        }
+        select{
+            border: 1px solid #d6cece;
+        }
+       
+    </style>
+</head>
+
+<body>
+    <div class="container">
+       
+        <div class="row">
+            <form method="post" action="{% url 'signup' %}" id="form">
+                {% csrf_token %}
+                <div class="col-sm" id="left">
+                    <h2>Registration Form</h2>
+                   
+                </div>
+                <div class="col-sm" id="right">
+                    <h2>Signup</h2>
+                    {{ form.as_p }}    
+                    
+                    <button type="submit" class="btn btn-primary" id="submit_button" onclick="auth_confirm">Signup</button>
+                    
+                </div>
+                
+            </form>
+        </div>
+    </div>
+   
+               
+            
 <script>
     document.querySelector("#id_password").type="password"
     function auth_confirm() {

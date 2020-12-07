@@ -44,7 +44,7 @@ def Signup(request):
 def inbox(request,thread_id):
     thread_=Thread.objects.get(pk=int(thread_id))
     messages=ChatMessage.objects.filter(thread=thread_)
-    context={"messages":messages}
+    context={"messages":messages,"thread":thread_}
     return render(request,'inbox.html',context)
 def Logout(request):
     logout(request.user)

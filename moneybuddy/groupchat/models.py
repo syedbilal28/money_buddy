@@ -4,6 +4,7 @@ from django.conf import settings
 import stripe
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.db.models import Q
 
 # Create your models here.
 stripe.api_key=settings.STRIPE_API_KEY
@@ -27,19 +28,19 @@ def _on_update_user(sender,instance,created,**kwargs):
         profile.save()
 
 class ThreadManager(models.Manager):
-    def by_user(self, user):
-        qlookup = Q(first=user) | Q(second=user)
-        qlookup2 = Q(first=user) & Q(second=user)
-        qs = self.get_queryset().filter(qlookup).exclude(qlookup2).distinct()
+    def by_roomname(self, roomname):
+        qlookup = Q(pk=roomname) 
+        # qlookup2 = Q(first=user) & Q(second=user)
+        qs = self.get_queryset().filter(qlookup).distinct()
         return qs
 
-    def get_or_new(self, user, other_username):  # get_or_create
-        username = user.username
-        if username == other_username:
-            return None
-        qlookup1 = Q(first__username=username) & Q(second__username=other_username)
-        qlookup2 = Q(first__username=other_username) & Q(second__username=username)
-        qs = self.get_queryset().filter(qlookup1 | qlookup2).distinct()
+    def get_or_new(self, roomname):  # get_or_create
+        # username = user.username
+        # if username == other_username:
+        #     return None
+        qlookup1 = Q(pk=roomname)
+        # qlookup2 = Q(first__username=other_username) & Q(second__username=username)
+        qs = self.get_queryset().filter(qlookup1).distinct()
         if qs.count() == 1:
             return qs.first(), False
         elif qs.count() > 1:
@@ -84,6 +85,6 @@ class ChatMessage(models.Model):
     user = models.ForeignKey(User, verbose_name='sender', on_delete=models.CASCADE)
     message = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
-    status= models.CharField(max_length=10,default="Sent")
+    
     class Meta:
         ordering=('timestamp',)

@@ -1,9 +1,9 @@
 from django import forms
 from django.contrib.auth.models import User
 class LoginForm(forms.Form):
-    username=forms.CharField(max_length=50,label='',widget=forms.TextInput(attrs={"id":"username"}))
+    username=forms.CharField(max_length=50,label='Username',label_suffix="",widget=forms.TextInput(attrs={"id":"username"}))
     
-    password=forms.CharField(max_length=50,label='',widget=forms.PasswordInput(attrs={"id":"password"}))
+    password=forms.CharField(max_length=50,label='Password',label_suffix="",widget=forms.PasswordInput(attrs={"id":"password"}))
     
 class SignupForm(forms.ModelForm):
     class Meta:
