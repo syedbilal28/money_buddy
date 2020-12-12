@@ -120,12 +120,28 @@
             /* margin-top: 1rem;
             margin-bottom: 4rem; */
         }
+        #thread_form{
+            position: absolute;
+            display:none;
+            z-index:3;
+            margin: auto;
+            width:40%;
+            height:40%;
+        }
     </style>
 </head>
 <body>
    
     
     <div class="container">
+        <div id="thread_form">
+            <form action="{% url 'create-thread' %}" method="post">
+                {% csrf_token %}
+                <label>Price for the Thread</label>
+                <input type="number" name="price">
+                <button type="submit">Create</button>
+            </form>
+        </div>
         <nav>
                 
             <a href="{% url 'index' %}" id="logo">Logo</a>
@@ -136,7 +152,7 @@
         <div id="advertisingbanner">
             <h3>advertising would come here</h3>
         </div>
-        <button class="btn btn-primary" id="Create"><i class="fas fa-plus-circle"></i>Create a new group</button>
+        <button class="btn btn-primary" id="Create" onclick="Show_Creation_form(event)"><i class="fas fa-plus-circle"></i>Create a new group</button>
         <div id="threads">
             {% for thread in Threads %}
             
@@ -151,8 +167,25 @@
         </div>
     </div>
     <script>
+        function Show_Creation_form(e){
+            document.querySelector("#thread_form").style.display="block"
+        }
         function go_to_chat(e){
-            window.location=""
+        $.ajax({
+            url: {% url 'Join' %},
+            type:"POST",
+            data: {
+            'thread_id':event.target.parentNode.dataset.info
+            },
+            dataType: 'json',
+            success: function (data) {
+            console.log(data)
+            // var target_24=target
+            // target_24.children[3].src=`data:image/png;base64,${data.data}`
+            window.location=`/${event.target.parentNode.dataset.info}`
+            
+            }
+        });
         }
     </script>
 </body>

@@ -1,8 +1,14 @@
 from django.shortcuts import render,HttpResponse,redirect
 from .forms import LoginForm,SignupForm
 from django.contrib.auth import login, logout,authenticate
-from .models import Thread,ChatMessage
+from .models import Thread,ChatMessage,Profile
+import stripe
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.models import User
+
+stripe.api_key = "sk_test_51HpXfpJEfpDOgYo1UQu5PZvq3Rj1bVWGbW1WcyRvh2jBZpJVRyu4kJ8uVzAItLgk07ZCi90VeRHXqMANxYhode1800WXZCTuuR"
 # Create your views here.
+@csrf_exempt
 def index(request):
     if request.method=="POST":
         print("POSTED")
@@ -50,4 +56,33 @@ def Logout(request):
     logout(request.user)
     return redirect ('index')
 def About_us(request):
+    return redirect('home')
+
+def Create_Thread(request):
+    created_by=request.user
+    print(request.POST)
+    thread_price=request.POST.get("price")
+    product=stripe.Product.create(name=f"{request.user.username}")
+    plan=stripe.Plan.create(
+        product=product.id,
+        nickname='Initial Plan',
+        interval='month',
+        currency='usd',
+        amount=thread_price,
+    )
+    thread_new=Thread.objects.create(admin=request.user,total_buyout=thread_price,product_id=product.id,plan_id=plan.id)
+    return redirect('home')
+@csrf_exempt
+def Join_Thread(request):
+    thread_id=request.POST.get("thread_id")
+    thread_to_join=Thread.objects.get(pk=thread_id)
+    thread_to_join.participants.add(request.user)
+    thread_to_join.save()
+    user=User.objects.get(pk=request.user.id)
+    profile=Profile.objects.get(user=user)
+    
+    subscription = stripe.Subscription.create(
+    customer=profile.stripe_id,
+    items=[{'plan': thread_to_join.plan_id}],
+        )
     return redirect('home')

@@ -6,5 +6,7 @@ urlpatterns=[
     path('signup/',views.Signup,name="signup"),
     path('home/<str:thread_id>',views.inbox,name="inbox"),
     path('logout/',views.Logout,name="Logout"),
-    path('aboutus/',views.About_us,name="aboutus")
+    path('aboutus/',views.About_us,name="aboutus"),
+    path('create_thread/',views.Create_Thread,name="create-thread"),
+    path('join/',views.Join_Thread,name="Join")
 ]

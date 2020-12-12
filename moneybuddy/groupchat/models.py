@@ -65,6 +65,9 @@ class Thread(models.Model):
     total_buyout=models.IntegerField(default=0)
     updated = models.DateTimeField(auto_now=True)
     timestamp = models.DateTimeField(auto_now_add=True)
+    product_id=models.CharField(max_length=30,blank=True)
+    plan_id=models.CharField(max_length=30,blank=True)
+    
 
     objects = ThreadManager()
     class Meta:
