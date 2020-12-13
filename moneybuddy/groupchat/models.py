@@ -10,7 +10,8 @@ from django.db.models import Q
 stripe.api_key=settings.STRIPE_API_KEY
 class Profile(models.Model):
     user=models.OneToOneField(User,on_delete=models.CASCADE,primary_key=True)
-    stripe_id=models.CharField(max_length=120)
+    stripe_id=models.CharField(max_length=120,unique=True)
+    payment_method_id=models.CharField(max_length=120,blank=True)
 
 @receiver(post_save,sender=User)
 def _on_update_user(sender,instance,created,**kwargs):

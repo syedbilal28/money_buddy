@@ -128,10 +128,45 @@
             width:40%;
             height:40%;
         }
+        #cardform{
+            position: absolute;
+            width:30vw;
+            height:40vh;
+            background-color: #dbdbdb;
+            border:1px solid #bababa;
+            /* background-color: black; */
+            border-radius: 2rem;
+            /* right:0px; */
+            margin:30vh 35vw;
+            padding: 40px 20px;
+            z-index: 2;
+            font-size: 3vmin;
+            display: none;
+
+        }
+        #cardform label,input,button{
+            display:block;
+            margin:5px;
+        }
+        #cardform button{
+            float:right;
+            bottom: 0px;
+        }
+        #cardform input{
+            border-radius: 0.5rem;
+            border: 1px solid #bababa;
+        }
     </style>
 </head>
 <body>
-   
+   <div id="cardform">
+        <label>Enter your card number</label>
+        
+        <input type="text" name="card_number" id="card_number">
+        <label>CVC number</label>
+        <input type="number" name="cvc" id="cvc">
+        <button type="submit" class="btn btn-primary" id="CardEnterButton" onclick="go_to_chat(event)">Submit</button>
+   </div>
     
     <div class="container">
         <div id="thread_form">
@@ -139,6 +174,7 @@
                 {% csrf_token %}
                 <label>Price for the Thread</label>
                 <input type="number" name="price">
+                
                 <button type="submit">Create</button>
             </form>
         </div>
@@ -161,7 +197,7 @@
                 
                 <p id="buyout"><b>Total Buyout:</b> <span class="byserver">{{ thread.total_buyout }}</span></p>
                 <p id="participants"><b>Number of participants:</b> <span class="byserver">{{ thread.participants.all.count }}</span></p>
-                <button class="btn btn-dark" id="join" onclick='go_to_chat(event)'>Join</button>
+                <button class="btn btn-dark" id="join" onclick='Display_card_form(event)'>Join</button>
             </div>
             {% endfor %}
         </div>
@@ -170,12 +206,23 @@
         function Show_Creation_form(e){
             document.querySelector("#thread_form").style.display="block"
         }
+        function Display_card_form (e){
+            var thread_id=event.target.parentNode.dataset.info
+            var join_form= document.querySelector("#cardform")
+            join_form.style.display="block"
+            join_form.dataset.info=thread_id
+        }
         function go_to_chat(e){
+            var card=document.querySelector("#card_number").value
+            var thread_id=document.querySelector("#cardform").dataset.info
+            var cvc=document.querySelector("#cvc").value
         $.ajax({
             url: {% url 'Join' %},
             type:"POST",
             data: {
-            'thread_id':event.target.parentNode.dataset.info
+            'thread_id':thread_id,
+            'cvc':cvc,
+            'card':card
             },
             dataType: 'json',
             success: function (data) {

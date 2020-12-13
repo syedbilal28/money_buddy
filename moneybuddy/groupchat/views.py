@@ -75,12 +75,27 @@ def Create_Thread(request):
 @csrf_exempt
 def Join_Thread(request):
     thread_id=request.POST.get("thread_id")
+    card=request.POST.get("card")
+    cvc=request.POST.get("cvc")
+    
     thread_to_join=Thread.objects.get(pk=thread_id)
     thread_to_join.participants.add(request.user)
     thread_to_join.save()
     user=User.objects.get(pk=request.user.id)
     profile=Profile.objects.get(user=user)
     
+    Payment_Method=stripe.PaymentMethod.create(
+        type="card",
+        card={
+            "number":card,
+            "cvc":cvc
+        }
+    )
+    profile.update(payment_method_id=Payment_Method.id)
+    stripe.PaymentMethod.attach(
+        Payment_Method.id,
+        customer=profile.stripe_id
+    )
     subscription = stripe.Subscription.create(
     customer=profile.stripe_id,
     items=[{'plan': thread_to_join.plan_id}],
