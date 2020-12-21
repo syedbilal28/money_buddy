@@ -8,4 +8,7 @@ class ThreadSerializer(serializers.Serializer):
     second = UserSerializer()
     updated = serializers.DateTimeField()
     timestamp = serializers.DateTimeField()
-    
+class ThreadSerializerStart(serializers.ModelSerializer):
+    class Meta:
+        model=Thread    
+        fields="__all__"

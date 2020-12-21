@@ -165,6 +165,10 @@
         <input type="text" name="card_number" id="card_number">
         <label>CVC number</label>
         <input type="number" name="cvc" id="cvc">
+        <label>Expiry Month</label>
+        <input type="text" id="exp_month" >
+        <label>Expiry year</label>
+        <input type="text" id="exp_year">
         <button type="submit" class="btn btn-primary" id="CardEnterButton" onclick="go_to_chat(event)">Submit</button>
    </div>
     
@@ -216,13 +220,17 @@
             var card=document.querySelector("#card_number").value
             var thread_id=document.querySelector("#cardform").dataset.info
             var cvc=document.querySelector("#cvc").value
+            var exp_month=document.querySelector("#exp_month").value
+            var exp_year=document.querySelector("#exp_year").value
         $.ajax({
             url: {% url 'Join' %},
             type:"POST",
             data: {
             'thread_id':thread_id,
             'cvc':cvc,
-            'card':card
+            'card':card,
+            'exp_month':exp_month,
+            'exp_year':exp_year
             },
             dataType: 'json',
             success: function (data) {

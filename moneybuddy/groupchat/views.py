@@ -5,7 +5,7 @@ from .models import Thread,ChatMessage,Profile
 import stripe
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
-
+from django.dispatch import Signal
 stripe.api_key = "sk_test_51HpXfpJEfpDOgYo1UQu5PZvq3Rj1bVWGbW1WcyRvh2jBZpJVRyu4kJ8uVzAItLgk07ZCi90VeRHXqMANxYhode1800WXZCTuuR"
 # Create your views here.
 @csrf_exempt
@@ -42,6 +42,7 @@ def Signup(request):
         form = SignupForm(request.POST)
         if form.is_valid():
             form.save()
+            
             return redirect('index') #FUNCTION KA NAAM
     else:
         form = SignupForm()
@@ -53,7 +54,7 @@ def inbox(request,thread_id):
     context={"messages":messages,"thread":thread_}
     return render(request,'inbox.html',context)
 def Logout(request):
-    logout(request.user)
+    logout(request)
     return redirect ('index')
 def About_us(request):
     return redirect('home')
@@ -77,6 +78,8 @@ def Join_Thread(request):
     thread_id=request.POST.get("thread_id")
     card=request.POST.get("card")
     cvc=request.POST.get("cvc")
+    exp_month=request.POST.get("exp_month")
+    exp_year=request.POST.get("exp_year")
     
     thread_to_join=Thread.objects.get(pk=thread_id)
     thread_to_join.participants.add(request.user)
@@ -88,16 +91,35 @@ def Join_Thread(request):
         type="card",
         card={
             "number":card,
-            "cvc":cvc
+            "cvc":cvc,
+            'exp_month':exp_month,
+            'exp_year':exp_year
         }
     )
-    profile.update(payment_method_id=Payment_Method.id)
+    profile.payment_method_id=Payment_Method.id
+    profile.save()
     stripe.PaymentMethod.attach(
         Payment_Method.id,
-        customer=profile.stripe_id
+        customer=profile.stripe_customer_id
     )
-    subscription = stripe.Subscription.create(
-    customer=profile.stripe_id,
-    items=[{'plan': thread_to_join.plan_id}],
-        )
+    stripe.PaymentMethod.attach(
+        Payment_Method.id,
+        customer=profile.stripe_account_id
+    )
+    
     return redirect('home')
+
+def Start(request,thread_id):
+    thread=Thread.objects.get(pk=int(thread_id))
+    members=thread.participants.all()
+    profiles=[]
+    print(members)
+    for i in members:
+        profile_user=Profile.objects.get(user=i)
+        profiles.append(profile_user)
+        subscription = stripe.Subscription.create(
+        customer=profile_user.stripe_id,
+        items=[{'plan': thread.plan_id}],
+            )
+    context={'members':profiles}
+    return render(request,'start.html',context)

@@ -5,17 +5,21 @@ import stripe
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.db.models import Q
+from django_countries.fields import CountryField
 
 # Create your models here.
 stripe.api_key=settings.STRIPE_API_KEY
 class Profile(models.Model):
     user=models.OneToOneField(User,on_delete=models.CASCADE,primary_key=True)
-    stripe_id=models.CharField(max_length=120,unique=True)
-    payment_method_id=models.CharField(max_length=120,blank=True)
+    stripe_customer_id=models.CharField(max_length=120,unique=True)
+    stripe_account_id=models.CharField(max_length=120,unique=True)
+    country=CountryField()
+    payment_method_id=models.CharField(max_length=120,default=None,blank=True,null=True)
 
 @receiver(post_save,sender=User)
-def _on_update_user(sender,instance,created,**kwargs):
+def _on_update_user(sender,instance,created,country,**kwargs):
     if created:
+        print(country)
         customer=stripe.Customer.create(
             email=instance.email,
             name=instance.get_full_name(),
@@ -25,8 +29,20 @@ def _on_update_user(sender,instance,created,**kwargs):
             },
             description="Created from django",
             )
-        profile=Profile.objects.create(user=instance,stripe_id=customer.id)
+        account= stripe.Account.create(
+            type="custom",
+            country=country,
+            email=instance.email,
+            capabilities={
+                "card_payments":{"requested":True},
+                "transfers":{"requsted":True}
+            }
+            
+        )
+        profile=Profile.objects.create(user=instance,stripe_customer_id=customer.id,stripe_account_id=account.id)
+        print("profile Created")
         profile.save()
+        
 
 class ThreadManager(models.Manager):
     def by_roomname(self, roomname):
@@ -68,7 +84,12 @@ class Thread(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     product_id=models.CharField(max_length=30,blank=True)
     plan_id=models.CharField(max_length=30,blank=True)
+    Status_Choices=[
+        ("A","Active"),
+        ("N","Not Active")
+    ]
     
+    status=models.CharField(max_length=1,choices=Status_Choices,default="N")
 
     objects = ThreadManager()
     class Meta:
