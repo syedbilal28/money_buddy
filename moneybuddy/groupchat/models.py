@@ -16,32 +16,36 @@ class Profile(models.Model):
     country=CountryField()
     payment_method_id=models.CharField(max_length=120,default=None,blank=True,null=True)
 
-@receiver(post_save,sender=User)
-def _on_update_user(sender,instance,created,country,**kwargs):
-    if created:
-        print(country)
-        customer=stripe.Customer.create(
-            email=instance.email,
-            name=instance.get_full_name(),
-            metadata={
-                'user_id':instance.pk,
-                'username':instance.username
-            },
-            description="Created from django",
-            )
-        account= stripe.Account.create(
-            type="custom",
-            country=country,
-            email=instance.email,
-            capabilities={
-                "card_payments":{"requested":True},
-                "transfers":{"requsted":True}
-            }
+# @receiver(post_save,sender=User)
+# def _on_update_user(sender,instance,created,**kwargs):
+#     if created:
+#         # print(country)
+#         print(kwargs)
+#         customer=stripe.Customer.create(
+#             email=instance.email,
+#             name=instance.get_full_name(),
+#             metadata={
+#                 'user_id':instance.pk,
+#                 'username':instance.username
+#             },
+#             description="Created from django",
+#             )
+#         account= stripe.Account.create(
+#             type="custom",
+#             country=country,
+#             email=instance.email,
+#             capabilities={
+#                 "card_payments":{"requested":True},
+#                 "transfers":{"requsted":True}
+#             }
             
-        )
-        profile=Profile.objects.create(user=instance,stripe_customer_id=customer.id,stripe_account_id=account.id)
-        print("profile Created")
-        profile.save()
+#         )
+#         profile=Profile.objects.get(user=instance)
+#         profile.stripe_customer_id=customer.id
+#         profile.stripe_account_id=account.id
+#         # profile=Profile.objects.create(user=instance,stripe_customer_id=customer.id)
+#         print("profile Created")
+#         profile.save()
         
 
 class ThreadManager(models.Manager):
@@ -90,6 +94,8 @@ class Thread(models.Model):
     ]
     
     status=models.CharField(max_length=1,choices=Status_Choices,default="N")
+    to_receive=models.OneToOneField(Profile,on_delete=models.CASCADE)
+    cycle=models.IntegerField(default=0)
 
     objects = ThreadManager()
     class Meta:
@@ -113,3 +119,5 @@ class ChatMessage(models.Model):
     
     class Meta:
         ordering=('timestamp',)
+
+# class Liabililities(models.Model):
