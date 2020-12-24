@@ -138,3 +138,4 @@ CHANNEL_LAYERS = {
         },
     },
 }
+STRIPE_SIGNING_SECRET="whsec_5fzqIiASxg9T6ItpesuBDgGe6Y758WOR"

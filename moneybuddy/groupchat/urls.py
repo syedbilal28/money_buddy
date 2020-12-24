@@ -9,5 +9,6 @@ urlpatterns=[
     path('aboutus/',views.About_us,name="aboutus"),
     path('create_thread/',views.Create_Thread,name="create-thread"),
     path('join/',views.Join_Thread,name="Join"),
-    path('Start/<str:thread_id>/',views.Start,name="Start")
+    path('Start/<str:thread_id>/',views.Start,name="Start"),
+    path("hooks/",views.my_webhook_view,name="Hook")
 ]

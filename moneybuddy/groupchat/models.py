@@ -82,7 +82,7 @@ class ThreadManager(models.Manager):
 class Thread(models.Model):
     
     admin= models.ForeignKey(User,on_delete=models.CASCADE,related_name="Admin")
-    participants=models.ManyToManyField(User)
+    participants=models.ManyToManyField(Profile,related_name="Participants")
     total_buyout=models.IntegerField(default=0)
     updated = models.DateTimeField(auto_now=True)
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -94,7 +94,7 @@ class Thread(models.Model):
     ]
     
     status=models.CharField(max_length=1,choices=Status_Choices,default="N")
-    to_receive=models.OneToOneField(Profile,on_delete=models.CASCADE)
+    to_receive=models.OneToOneField(Profile,on_delete=models.CASCADE,blank=True,null=True)
     cycle=models.IntegerField(default=0)
 
     objects = ThreadManager()
