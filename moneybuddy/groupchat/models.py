@@ -15,7 +15,8 @@ class Profile(models.Model):
     stripe_account_id=models.CharField(max_length=120,unique=True)
     country=CountryField()
     payment_method_id=models.CharField(max_length=120,default=None,blank=True,null=True)
-
+    def __str__(self):
+        return self.user.username
 # @receiver(post_save,sender=User)
 # def _on_update_user(sender,instance,created,**kwargs):
 #     if created:
@@ -81,9 +82,9 @@ class ThreadManager(models.Manager):
 
 class Thread(models.Model):
     
-    admin= models.ForeignKey(User,on_delete=models.CASCADE,related_name="Admin")
+    admin= models.ForeignKey(Profile,on_delete=models.CASCADE,related_name="Admin")
     participants=models.ManyToManyField(Profile,related_name="Participants")
-    total_buyout=models.IntegerField(default=0)
+    monthly_charge=models.IntegerField(default=0)
     updated = models.DateTimeField(auto_now=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     product_id=models.CharField(max_length=30,blank=True)
@@ -99,7 +100,9 @@ class Thread(models.Model):
 
     objects = ThreadManager()
     class Meta:
-        ordering=('total_buyout',)
+        ordering=('monthly_charge',)
+    def __str__(self):
+        return self.admin.user.username
     @property
     def room_group_name(self):
         return f'chat_{self.id}'

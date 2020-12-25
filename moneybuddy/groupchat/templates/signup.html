@@ -12,7 +12,7 @@
         body{
             background-color: #d9d9d9;
             font-family: 'Open Sans', sans-serif;
-            font-size: 1.75vmin;
+            font-size: 2.5vmin;
             background-image: url("{% static 'signup_bg.jpg' %}");
             overflow-x: hidden;
         }
@@ -31,20 +31,23 @@
             vertical-align: middle;
             margin-top: 12%;
             position: relative;
-            height:70%;
+            /* height:70%; */
         }
         #left{
             /* border:1px solid black; */
+            position: absolute;
             background-color: #D26450;
             opacity:0.9;
-            width:40%;
+            width:35%;
             border-radius: 1rem 0px 0px 1rem;
+            height: 100%;
+            /* height: 68vh; */
         }
         .helptext{
             display: none;
         }
         .col-sm{
-            
+            /* position: absolute; */
             line-height: 2vh;
             /* width:50%; */
             float:left;
@@ -54,15 +57,18 @@
         }
         
         #right{
+            /* position: absolute; */
            background-color: #fff;
            border-radius: 1rem;
-           width:60%;
+           margin-left: 35%;
+           width:65%;
+           /* height: 100%; */
            border-radius: 0px 1rem 1rem 0px;
            opacity: 0.9;
         }
         form{
-            position: absolute;
-            height:100%;
+            /* position: absolute; */
+            /* height:100%; */
             
         }
         label{
@@ -76,6 +82,7 @@
         h2{
             color: #fff;
             padding:3rem;
+            font-size: 4vmin;
         }
         #id_email{
             display:block;
@@ -87,7 +94,7 @@
             border-radius: 0.25rem;
             border: 1px solid #d6cece;
             height:3.8vh;
-            width:18vw;
+            width:100%;
         }
         #submit_button{
             display: block;
@@ -101,7 +108,14 @@
         select{
             border: 1px solid #d6cece;
         }
-       
+        @media only screen and (max-width: 768px) {
+            p{
+                padding-left: 0.5rem ;
+            }
+            h2{
+                padding-left:0.5rem ;
+            }
+        }
     </style>
 </head>
 
@@ -109,14 +123,15 @@
     <div class="container">
        
         <div class="row">
-            <form method="post" action="{% url 'signup' %}" id="form">
-                {% csrf_token %}
+            
                 <div class="col-sm" id="left">
                     <h2>Registration Form</h2>
                    
                 </div>
                 <div class="col-sm" id="right">
                     <h2>Signup</h2>
+                    <form method="post" action="{% url 'signup' %}" id="form">
+                        {% csrf_token %}
                     {{ form.as_p }}    
                     
                     <button type="submit" class="btn btn-primary" id="submit_button" onclick="auth_confirm">Signup</button>
@@ -130,6 +145,8 @@
                
             
 <script>
+    var sel=$("select")
+    sel.css("width","100%")
     document.querySelector("#id_password").type="password"
     function auth_confirm() {
         if ($("#id_password").value() === $("#pass_confirm").value()){

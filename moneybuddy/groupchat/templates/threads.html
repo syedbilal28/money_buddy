@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://kit.fontawesome.com/809f59b569.js" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
     <style>
         body{
             margin:0;
@@ -21,10 +22,11 @@
         }
         
         #thread{
-            height: 18vh;
+            /* height: 18vh; */
             border-top:1px solid #ccc;
             border-bottom:1px solid #ccc;
             position: relative;
+            /* min-height: 100px; */
             padding-top:1rem;
         }
         #thread :hover{
@@ -49,7 +51,7 @@
             margin:0 10%;
             margin-top:15vh;
 
-            height:20vh;
+            height:20%;
             border: 1px solid #ccc;
         
             width:80%;
@@ -57,9 +59,9 @@
         nav{
             background-color: #D26450;
             position: absolute;
-            height:10%;
+            height:10vh;
             width:100%;
-            padding-top: 1rem;
+            padding-top: 1vh;
         }
         nav a{
             text-decoration: none;
@@ -75,7 +77,8 @@
         #join{
             position: absolute;
             right:0px;
-            bottom:0px;
+            /* bottom:0px; */
+            top:0.5vh;
             margin-bottom: 0.5rem;
         }
         nav a:hover{
@@ -83,7 +86,7 @@
             color:black;
         }
         #Logout{
-            padding:0.75rem 1rem;
+            padding:0.5rem 1rem;
             /* margin-top: 1rem; */
             margin-right: 2rem;
             background-color: white;
@@ -104,13 +107,13 @@
         }
         #threads{
             margin:0 10%;
-            margin-top:34%;
+            margin-top:25%;
             position: absolute;
             
             width:80%;
         }
         #Create{
-            margin-top:30%;
+            margin-top:20%;
             display: block;
             position: absolute;
             right:0px;
@@ -122,10 +125,12 @@
         }
         #thread_form{
             position: absolute;
-            display:none;
+            /* display:none; */
             z-index:3;
-            margin: auto;
-            width:40%;
+            top:30%;
+            left:30%;
+            border: 1px solid black;
+            width:30%;
             height:40%;
         }
         #cardform{
@@ -156,32 +161,117 @@
             border-radius: 0.5rem;
             border: 1px solid #bababa;
         }
+        h3{
+            font-size: 3.5vmin;
+        }
+        p{
+            padding-top: 3.04vh;
+        }
+        @media only screen and (max-width: 768px) {
+  /* For mobile phones: */
+    body{
+        font-size: 3.5vmin;     
+    }
+        #advertisingbanner {
+            position: absolute;
+            margin: 0 10%;
+            margin-top: 9vh;
+            height: 8%;
+            border: 1px solid #ccc;
+            width: 80%;
+        }
+       
+        h3{
+            font-size: 4vmin;
+        }
+        #Create,#join,#Logout{
+            font-size: 13px;
+        }
+        nav {
+            height: 7%;
+        }
+        #threads{
+            margin-top:45%;
+        }
+        #Create{
+            margin-top: 35%;
+        }
+        #thread{
+            height: 13vh;
+        }
+    }
     </style>
 </head>
 <body>
-   <div id="cardform">
-        <label>Enter your card number</label>
-        
-        <input type="text" name="card_number" id="card_number">
-        <label>CVC number</label>
-        <input type="number" name="cvc" id="cvc">
-        <label>Expiry Month</label>
-        <input type="text" id="exp_month" >
-        <label>Expiry year</label>
-        <input type="text" id="exp_year">
-        <button type="submit" class="btn btn-primary" id="CardEnterButton" onclick="go_to_chat(event)">Submit</button>
-   </div>
-    
+   
+   
     <div class="container">
-        <div id="thread_form">
-            <form action="{% url 'create-thread' %}" method="post">
-                {% csrf_token %}
-                <label>Price for the Thread</label>
-                <input type="number" name="price">
-                
-                <button type="submit">Create</button>
-            </form>
-        </div>
+        <div id="cardModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+          
+              <!-- Modal content-->
+              <div class="modal-content">
+                <div class="modal-header">
+                 
+                  <h4 class="modal-title">Join Form</h4>
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body cardform">
+                    <!-- <div id="cardform"> -->
+                        <div class="form-group">
+                            <label>Enter your card number</label>
+                            <input type="text" name="card_number" id="card_number" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>CVC number</label>
+                            <input type="number" name="cvc" id="cvc" class="form-control" placeholder="3 digit">
+                        </div>
+                        <div class="form-group">
+                            <label>Expiry Month</label>
+                            <input type="text" id="exp_month" class="form-control" placeholder="MM">
+                        </div>
+                        <div class="form-group">
+                            <label>Expiry year</label>
+                            <input type="text" id="exp_year" class="form-control" placeholder="YYYY">
+                        </div>
+                        <button type="submit" class="btn btn-outline-success" id="CardEnterButton" onclick="go_to_chat(event)">Submit</button>
+                    <!-- </div> -->
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+          
+            </div>
+          </div>
+        
+        <div id="createModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+          
+              <!-- Modal content-->
+              <div class="modal-content">
+                <div class="modal-header">
+                 
+                  <h4 class="modal-title">Create Thread</h4>
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'create-thread' %}" method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label>Monthly Charge</label>
+                            <input type="number" name="price" class="form-control">
+                        </div>
+                        <button type="submit" class="btn btn-outline-success">Create</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+          
+            </div>
+          </div>
         <nav>
                 
             <a href="{% url 'index' %}" id="logo">Logo</a>
@@ -192,33 +282,51 @@
         <div id="advertisingbanner">
             <h3>advertising would come here</h3>
         </div>
-        <button class="btn btn-primary" id="Create" onclick="Show_Creation_form(event)"><i class="fas fa-plus-circle"></i>Create a new group</button>
+        <button type="button" class="btn btn-primary" id="Create" onclick="Show_Creation_form()"  data-toggle="modal" data-target="#myModal"><i class="fas fa-plus-circle"></i>Create a new group</button>
         <div id="threads">
             {% for thread in Threads %}
             
             <div id="thread"  data-info="{{ thread.pk }}">
-                <h3> Looked up by {{ thread.admin }}</h3>
-                
-                <p id="buyout"><b>Total Buyout:</b> <span class="byserver">{{ thread.total_buyout }}</span></p>
+                <h3> Looked up by {{ thread.admin }}</h3>                
+                <p id="buyout"><b>Monthly Charge:</b> <span class="byserver">{{ thread.monthly_charge }}</span></p>
                 <p id="participants"><b>Number of participants:</b> <span class="byserver">{{ thread.participants.all.count }}</span></p>
-                <button class="btn btn-dark" id="join" onclick='Display_card_form(event)'>Join</button>
+                {% if User not in thread.participants.all %}
+                    {% if User == thread.admin %}
+                    <button class="btn btn-secondary" id="join" onclick='go_to_thread(event)'>View</button>
+                       
+                    {% else %}
+                    
+                    <button class="btn btn-dark" id="join" onclick='Display_card_form(event)'>Join</button>
+                    {% endif %}   
+                
+                {% else %}
+                    <button class="btn btn-secondary" id="join" onclick='go_to_thread(event)'>View</button>
+                {% endif %}
+                
             </div>
             {% endfor %}
         </div>
     </div>
     <script>
         function Show_Creation_form(e){
-            document.querySelector("#thread_form").style.display="block"
+            // document.querySelector("#thread_form").style.display="block"
+            $('#createModal').modal('show');
+        }
+        function go_to_thread(e){
+            console.log(event.target.parentNode)
+            var thread_id=event.target.parentNode.dataset.info
+            window.location.href=thread_id
         }
         function Display_card_form (e){
             var thread_id=event.target.parentNode.dataset.info
-            var join_form= document.querySelector("#cardform")
-            join_form.style.display="block"
+            var join_form= document.querySelector(".cardform")
+            // join_form.style.display="block"
             join_form.dataset.info=thread_id
+            $('#cardModal').modal('show');
         }
         function go_to_chat(e){
             var card=document.querySelector("#card_number").value
-            var thread_id=document.querySelector("#cardform").dataset.info
+            var thread_id=document.querySelector(".cardform").dataset.info
             var cvc=document.querySelector("#cvc").value
             var exp_month=document.querySelector("#exp_month").value
             var exp_year=document.querySelector("#exp_year").value
@@ -237,7 +345,7 @@
             console.log(data)
             // var target_24=target
             // target_24.children[3].src=`data:image/png;base64,${data.data}`
-            window.location=`/${event.target.parentNode.dataset.info}`
+            window.location.href=`/${thread_id}`
             
             }
         });
