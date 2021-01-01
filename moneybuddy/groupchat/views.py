@@ -8,6 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from django.dispatch import Signal
 from django.http import JsonResponse
+import asyncio
 stripe.api_key = "sk_test_51HpXfpJEfpDOgYo1UQu5PZvq3Rj1bVWGbW1WcyRvh2jBZpJVRyu4kJ8uVzAItLgk07ZCi90VeRHXqMANxYhode1800WXZCTuuR"
 # Create your views here.
 @csrf_exempt
@@ -159,9 +160,9 @@ def my_webhook_view(request):
     # Then define and call a method to handle the successful attachment of a PaymentMethod.
     # handle_payment_method_attached(payment_method)
   # ... handle other event types
-  elif event.type =="invoice.finalized" and event.data.type=="subscription":
+  elif event.type =="invoice.finalized" and event.data.object.lines.data[0].type=="subscription":
       print("Making payment to user")
-      plan_id=event.data.plan.id
+      plan_id=event.data.object.lines.data[0].plan
       thread=Thread.objects.get(plan_id=plan_id)
       receiver= thread.to_receive
       stripe.Transfer.create(
