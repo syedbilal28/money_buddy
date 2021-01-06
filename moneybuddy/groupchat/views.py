@@ -8,6 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from django.dispatch import Signal
 from django.http import JsonResponse
+import asyncio
 stripe.api_key = "sk_test_51HpXfpJEfpDOgYo1UQu5PZvq3Rj1bVWGbW1WcyRvh2jBZpJVRyu4kJ8uVzAItLgk07ZCi90VeRHXqMANxYhode1800WXZCTuuR"
 # Create your views here.
 @csrf_exempt
@@ -164,7 +165,7 @@ def my_webhook_view(request):
   elif event.type =="invoice.paid" and event.data.object.lines.data.type=="subscription":
       raise Exception ("STOPPP FOUND USERRR")
       print("Making payment to user")
-      plan_id=event.data.plan.id
+      plan_id=event.data.object.lines.data[0].plan
       thread=Thread.objects.get(plan_id=plan_id)
       receiver= thread.to_receive
       stripe.Transfer.create(
