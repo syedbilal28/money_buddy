@@ -14,6 +14,7 @@
             padding: 0px;
             font-family: 'Open Sans', sans-serif;
             overflow-x: hidden;
+            width: 100vw;
         }
         .container{
             margin: 0px; 
@@ -132,48 +133,36 @@ background-position:center;
             color: #f2f2f2;
         }
         #bottom1{
-            position: absolute;
-            width:105%;
-            height:50vh;
+            position: relative;
+            width:100vw;
+            max-height:90vh;
             background-color:rgba(210, 100, 80,0.2);
            
         }
-        .col-sm{
-            position: relative;
-            padding:0;
-            width:50%;
-            text-align: center;
-           
-        }
-        #right_img{
+        #bottom1_img{
+            /* position: absolute; */
+
+            width: 60vw;
+            max-height: 90vh;
             background-repeat:no-repeat;
             -webkit-background-size:cover;
             -moz-background-size:cover;
             -o-background-size:cover;
             background-size:cover;
             background-position:center;
-            width:50vw;
-            height: 50vh;
         }
-        .col-sm img{
-            position: absolute;
-            /* margin-top: 1.5rem; */
-            width:100%;
-            height:100%;
-            /* margin-left: auto;
-            margin-right:auto ; */
+        #left{
+            /* position: absolute; */
+            width: 60vw;
         }
-        .col-sm ul{
-            margin-top:5rem;
-            padding-left:5vw;
-            list-style: none;
-            
+        #right{
+            /* position: absolute; */
+            float: right;
+            width:40vw;
+            text-align: center;
         }
-        .col-sm ul li{
-            padding-bottom: 1rem;
-        }
-        .col-sm ul li h3{
-            font-size: 5vmin;
+        #text{
+            font-size: 3vmin;
         }
         @media only screen and (max-width: 768px) {
             #form_container {
@@ -217,16 +206,12 @@ background-position:center;
             </div>
         </div>
         <div id="bottom1" class="row">
-            <div class="col-sm">
-                <ul>
-                    <li><h3><i class="far fa-lightbulb"></i>A Feature</h3></li>
-                    <li><h3><i class="far fa-lightbulb"></i>A Feature</h3></li>
-                    <li><h3><i class="far fa-lightbulb"></i>A Feature</h3></li>
-                    <li><h3><i class="far fa-lightbulb"></i>A Feature</h3></li>
-                </ul>
+            <div class="col-sm" id="left">
+                <img id="bottom1_img" src="{% static 'landing_page1.jpeg' %}" alt="">
             </div>
-            <div class="col-sm" style="background-image: url({% static 'source_5.jpg' %});" id="right_img">
-                <!-- <img src="{% static 'source_4.jpg' %}" alt=""> -->
+            <div class="col-sm" id="right">
+                <h1 style="padding-top: 30px;">How it Works</h1>
+                <p id="text" style="padding-top: 20px;"><span>Ayutogroup enables small groups of individuals to come together and save money for short term goals. Here's how it works: members (could be friends or strangers) get together online and decide to contribute a fixed amount of money into a savings pot each month. Every month one member of the group gets to take home the entire savings pot. This continues until everyone in the group has had a chance to take the pot.</span></p>
             </div>
         </div>
     </div>

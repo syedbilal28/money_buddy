@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <title>Document</title>
+</head>
+<style>
+    .container{
+        /* border: 1px solid black; */
+        height: 100vh;
+        margin: 0px;
+        padding: 0px;
+        width: 100vw;
+    }
+    nav{
+        border: 1px solid black;
+        min-height: 40px;
+    }
+    #ChatHolder{
+        width: 75vw;
+        float: left;
+        border: 1px solid black;
+    }
+    #ads{
+        width: 25vw;
+        float: right;
+        border: 1px solid black;
+    }
+    #chat-header{
+        min-height: 60px;
+        border: 1px solid green;
+    }
+    .header{
+        display: inline-block;
+    }
+    .right{
+        float: right;
+    }
+</style>
+<body>
+    <nav>
+            
+                
+        <a href="{% url 'index' %}" id="logo">Logo</a>
+        <!-- <a href="" id="work">How it Works</a> -->
+        <a href="{% url 'Logout' %}" id="Logout">Logout</a>
+    
+    
+</nav>
+    <div class="container">
+        
+        <div id="ads">
+            <div class="row">
+                For ads
+            </div>
+            <div class="row">
+                For ads
+            </div>
+        </div>
+        <div id="ChatHolder">
+            <div id="chat-header">
+                
+
+                        <h3 class="header">Created By: Bilal</h3>
+                        <h4 class="header">Monthly Charge: 200</h4>
+                        <p class="header right" id="participants"> Participants: 5</p>
+                        <!-- <button id="add" class="btn btn-primary header">Add People</button> -->
+                        
+                        <button id="start" onclick="Start()" class="btn btn-primary header right">Start</button>
+                        
+                    
+            </div>
+            <div id="Chatbox">
+                
+                <div class="chat-message">
+                    <p class="sender">bilal</p><span class="time">12pm</span><br>
+                    <p class="message">Hello</p>
+                    
+                </div>
+                
+            </div>
+            <div id="form_holder">
+                <form id="form">
+                    <textarea type="text" placeholder="Type a text message" id="chat_message"></textarea>
+                    <input type="hidden" id="myusername" value="{{ user.username }}">
+                    <button type="submit" class="btn btn-primary" >Send</button>
+                </form>
+            </div>
+        </div>
+    </div> 
+    
+</body>
+</html>

@@ -288,8 +288,8 @@
             
             <div id="thread"  data-info="{{ thread.pk }}">
                 <h3> Looked up by {{ thread.admin }}</h3>                
-                <p id="buyout"><b>Monthly Charge:</b> <span class="byserver">{{ thread.monthly_charge }}</span></p>
-                <p id="participants"><b>Number of participants:</b> <span class="byserver">{{ thread.participants.all.count }}</span></p>
+                <p id="buyout"><b>Monthly Savings:</b> <span class="byserver">{{ thread.monthly_charge }}</span></p>
+                <p id="participants"><b>Participants:</b> <span class="byserver">{{ thread.participants.all.count }}</span></p>
                 {% if User not in thread.participants.all %}
                     {% if User == thread.admin %}
                     <button class="btn btn-secondary" id="join" onclick='go_to_thread(event)'>View</button>
@@ -330,26 +330,25 @@
             var cvc=document.querySelector("#cvc").value
             var exp_month=document.querySelector("#exp_month").value
             var exp_year=document.querySelector("#exp_year").value
-        $.ajax({
-            url: {% url 'Join' %},
-            type:"POST",
-            data: {
-            'thread_id':thread_id,
-            'cvc':cvc,
-            'card':card,
-            'exp_month':exp_month,
-            'exp_year':exp_year
-            },
-            dataType: 'json',
-            success: function (data) {
-            console.log(data)
-            // var target_24=target
-            // target_24.children[3].src=`data:image/png;base64,${data.data}`
-            window.location.href=`/${thread_id}`
-            
-            }
+            $.ajax({
+                url: {% url 'Join' %},
+                type:"POST",
+                data: {
+                'thread_id':thread_id,
+                'cvc':cvc,
+                'card':card,
+                'exp_month':exp_month,
+                'exp_year':exp_year
+                },
+                dataType: 'json',
+                success: function (data) {
+                console.log(data)
+                
+                window.location.href=`${thread_id}`
+                
+                }
         });
-        }
+        }       
     </script>
 </body>
 </html>

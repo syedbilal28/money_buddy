@@ -20,7 +20,7 @@
         }
         nav{
             background-color: #D26450;
-            position: absolute;
+            /* position: absolute; */
             height:8.8vh;
             width:100%;
             padding-top: 1rem;
@@ -59,7 +59,7 @@
         }
         #ChatHolder{
             position: relative;
-            margin-top:9.7vh;
+            /* margin-top:9.7vh; */
             /* border:1px solid black; */
             width:82vw;
             height:91.2vh;
@@ -70,7 +70,7 @@
 
             position:absolute;
             width:100%;
-            height:9vh;
+            height:11vh;
             background-color: #e5a59a;
             padding:1vh 2vw;
         }
@@ -80,7 +80,7 @@
             padding:0 2rem;
         }
         #participants{
-            position: absolute;
+            /* position: absolute; */
             float:right;
             /* top:0px; */
             padding-top: 2.5rem;;
@@ -159,17 +159,17 @@
     </style>
 </head>
 <body>
-
-    <div class="container">
-        <nav>
-            <nav>
-                
-                <a href="{% url 'index' %}" id="logo">Logo</a>
-                <!-- <a href="" id="work">How it Works</a> -->
-                <a href="{% url 'Logout' %}" id="Logout">Logout</a>
+    <nav>
             
-            </nav>
-        </nav>
+                
+        <a href="{% url 'index' %}" id="logo">Logo</a>
+        <!-- <a href="" id="work">How it Works</a> -->
+        <a href="{% url 'Logout' %}" id="Logout">Logout</a>
+    
+    
+</nav>
+    <div class="container">
+        
         <div id="ads">
             <div class="row">
                 For ads
@@ -185,9 +185,10 @@
                         <h3 class="header">Created By: {{ thread.admin }}</h3>
                         <h4 class="header">Monthly Charge: {{ thread.monthly_charge }}</h4>
                         <p class="header" id="participants"> Participants: {{ thread.participants.all.count }}</p>
-                        <button id="add" class="btn btn-primary">Add People</button>
+                        
+                        {% if User == thread.admin %}
                         <button id="start" onclick="Start()" class="btn btn-primary">Start</button>
-                                            
+                        {% endif %}
                     
             </div>
             <div id="Chatbox">

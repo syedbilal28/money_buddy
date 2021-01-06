@@ -54,7 +54,8 @@ def Signup(request):
 def inbox(request,thread_id):
     thread_=Thread.objects.get(pk=int(thread_id))
     messages=ChatMessage.objects.filter(thread=thread_)
-    context={"messages":messages,"thread":thread_}
+    profile=Profile.objects.get(user=request.user)
+    context={"messages":messages,"thread":thread_,"User":profile}
     return render(request,'inbox.html',context)
 def Logout(request):
     logout(request)
@@ -116,7 +117,7 @@ def Join_Thread(request):
     #     customer=profile.stripe_account_id
     # )
     
-    return HttpResponse(status=200)
+    return JsonResponse({"Thread":thread_id},safe=False)
 
 def Start(request,thread_id):
     thread=Thread.objects.get(pk=int(thread_id))
@@ -135,6 +136,7 @@ def Start(request,thread_id):
             return HttpResponse(f"{User.objects.get(pk=i.pk).username} has no payment source attached")
     context={'members':profiles}
     return render(request,'start.html',context)
+    # return redirect(inbox(request,thread_id))
 
 @csrf_exempt
 def my_webhook_view(request):
@@ -159,7 +161,8 @@ def my_webhook_view(request):
     # Then define and call a method to handle the successful attachment of a PaymentMethod.
     # handle_payment_method_attached(payment_method)
   # ... handle other event types
-  elif event.type =="invoice.finalized" and event.data.type=="subscription":
+  elif event.type =="invoice.paid" and event.data.object.lines.data.type=="subscription":
+      raise Exception ("STOPPP FOUND USERRR")
       print("Making payment to user")
       plan_id=event.data.plan.id
       thread=Thread.objects.get(plan_id=plan_id)
