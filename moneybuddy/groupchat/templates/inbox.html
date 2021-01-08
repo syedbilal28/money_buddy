@@ -13,6 +13,15 @@
             padding:0;
             overflow-y: hidden;
         }
+        P{
+            font-size: 3vmin;
+        }
+        h3{
+            font-size: 4vmin;
+        }
+        h4{
+            font-size: 4vmin;
+        }
         .container{
             margin:0;
             padding:0;
@@ -68,9 +77,9 @@
         
         #chat-header{
 
-            position:absolute;
+            /* position:absolute; */
             width:100%;
-            height:11vh;
+            min-height:11vh;
             background-color: #e5a59a;
             padding:1vh 2vw;
         }
@@ -93,11 +102,11 @@
         }
         #Chatbox{
             /* margin-top:19vh; */
-            position: absolute;
-            margin-top:9vh;
+            /* position: absolute; */
+            /* margin-top:9vh; */
             padding:0 2vw;
             width:100%;
-            height: 75%;
+            max-height: 75%;
             overflow-y: auto;
             /* border:1px solid black; */
         }
@@ -123,7 +132,8 @@
         }
         #form_holder{
             position: absolute;
-            margin-top: 76.6vh;
+            /* margin-top: 76.6vh; */
+            bottom: 0px;
             width:100%;
             height:15%;
             /* border:1px solid black; */
@@ -156,6 +166,22 @@
             width:18vw;
             height:45vh;
         }
+        @media only screen and (max-width: 768px) {
+            #chat-header{
+                min-height: 5vh;
+                padding: 0px;
+            }
+            #ads{
+                display: none;
+            }
+            #ChatHolder{
+                width: 100vw;
+            }
+            #participants{
+                padding-top: 0px;
+                float: none;
+            }
+        }
     </style>
 </head>
 <body>
@@ -187,7 +213,7 @@
                         <p class="header" id="participants"> Participants: {{ thread.participants.all.count }}</p>
                         
                         {% if User == thread.admin %}
-                        <button id="start" onclick="Start()" class="btn btn-primary">Start</button>
+                        <!-- <button id="start" onclick="Start()" class="btn btn-primary">Start</button> -->
                         {% endif %}
                     
             </div>
