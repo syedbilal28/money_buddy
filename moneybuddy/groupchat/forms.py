@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django_countries.widgets import CountrySelectWidget
 from django_countries.fields import CountryField
 from .models import Profile
+
 import stripe
 class LoginForm(forms.Form):
     username=forms.CharField(max_length=50,label='Username',label_suffix="",widget=forms.TextInput(attrs={"id":"username"}))
@@ -57,6 +58,8 @@ class SignupForm(forms.ModelForm):
         print("profile Created")
         profile.save()
         print("Second commit completed")
+        
         return user
 class ThreadCreationForm(forms.Form):
     Price=forms.IntegerField(label='Buy out',label_suffix='',widget=forms.TextInput(attrs={"id":"price_input"}))
+

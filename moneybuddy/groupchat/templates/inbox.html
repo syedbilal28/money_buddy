@@ -253,12 +253,12 @@
     var endpoint=  wsStart+loc.host+loc.pathname
     
     
-    // if(window.socket){
-    //     if(window.socket.readyState === WebSocket.OPEN){
-    //         window.socket.close()
-    //     }
-    // }
-    // window.socket= new ReconnectingWebSocket(endpoint)
+    if(window.socket){
+        if(window.socket.readyState === WebSocket.OPEN){
+            window.socket.close()
+        }
+    }
+    window.socket= new ReconnectingWebSocket(endpoint)
     
     
     

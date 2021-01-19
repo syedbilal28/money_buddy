@@ -23,7 +23,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # print(thread_obj)
         # print(thread_id, me)
         self.thread_obj = thread_obj
-        print(thread_obj)
+        # print(thread_obj)
         chat_room = f"thread_{thread_obj.id}"
         self.chat_room = chat_room
         await self.channel_layer.group_add(
