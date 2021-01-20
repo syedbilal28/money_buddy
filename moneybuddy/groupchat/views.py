@@ -15,6 +15,7 @@ stripe.api_key = "sk_test_51HpXfpJEfpDOgYo1UQu5PZvq3Rj1bVWGbW1WcyRvh2jBZpJVRyu4k
 def index(request):
     if request.method=="POST":
         print("POSTED")
+        print(request.POST)
         form = LoginForm(data=request.POST)
         print(form)
         if form.is_valid():
@@ -27,10 +28,15 @@ def index(request):
             if user is not None:
                 login(request,user)
                 return redirect('home')
+            else:
+
+                # return redirect('index')
+                return HttpResponse("Invalid Credentials")
     else:
 
         form = LoginForm()
-        return render(request,'index.html',{"form":form})
+        message="Invalid Credentials"
+        return render(request,'index.html',{"form":form,"message":message})
 def home(request):
     threads=Thread.objects.all()
     profile=Profile.objects.get(user=request.user)
