@@ -30,9 +30,11 @@
         nav{
             background-color: #D26450;
             /* position: absolute; */
-            height:8.8vh;
-            width:100%;
-            padding-top: 1rem;
+            /* height:8.8vh; */
+            /* width:100%; */
+            /* padding
+            -top: 1rem; */
+            padding: 20px;
         }
         nav a{
             text-decoration: none;
@@ -72,6 +74,7 @@
             /* border:1px solid black; */
             width:82vw;
             height:91.2vh;
+            border-right: 1px solid rgba(0,0,0,0.5);
             
         }
         
@@ -104,9 +107,10 @@
             /* margin-top:19vh; */
             /* position: absolute; */
             /* margin-top:9vh; */
+            margin-top: 10px;
             padding:0 2vw;
             width:100%;
-            max-height: 75%;
+            height: 70%;
             overflow-y: auto;
             /* border:1px solid black; */
         }
@@ -272,7 +276,8 @@
         var msg_rec=JSON.parse(e.data)
         
         msg_rec=JSON.parse(msg_rec.text)
-        add_received_message(msg_rec.message,msg_rec.username)
+        console.log("parsed",msg_rec)
+        add_received_message(msg_rec.message,msg_rec.username,msg_rec.time)
     
     }
     
@@ -311,26 +316,35 @@
     
     }
     
-    function add_received_message(message,user){
-    console.log(message)
+    function add_received_message(message,user,timestamp){
+    console.log(timestamp)
     const chatholder=document.querySelector("#Chatbox")
     
-    var div = document.createElement("div")
+    var div=document.createElement("div")
+    div.className="chat-message"
+    var sender=document.createElement("p")
+    sender.className="sender"
+    sender.innerText=user
+    var timestamp=document.createElement("span")
+    timestamp.className="time"
+    timestamp.html(timestamp)
+    var br =document.createElement("br")
+    var msg=document.createElement("p")
+    msg.className="message"
+    msg.innerText=message
+
     
-    div.setAttribute('id', 'test')
-    div.setAttribute('class', 'chat-message')
     
-    var p = document.createElement("p")
-    p.className="pBlock"
-    
-    
-    var sender=user
-    var text=message   //for id just type message.id        
-    p.innerText=text
-    div.appendChild(p)
+    // var sender=user
+    // var text=message   //for id just type message.id        
+    // p.innerText=text
+    div.append(sender)
+    div.append(timestamp)
+    div.append(br)
+    div.append(msg)
     
     console.log(div)
-    chatholder.appendChild(div)
+    chatholder.append(div)
 }
 </script>
 </body>

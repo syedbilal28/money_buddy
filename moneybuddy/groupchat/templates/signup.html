@@ -116,6 +116,18 @@
                 padding-left:0.5rem ;
             }
         }
+        #invalid-wrapper{
+            
+            padding: 10px;
+            /* margin-bottom: 10px; */
+            /* text-align: center; */
+            border-radius: 0.5rem;
+            border: 1px solid rgb(214, 47, 47);
+            background-color: rgba(214, 47, 47,0.1);
+            color: rgba(219, 29, 29,0.7);
+            /* opacity: 0.1; */
+        
+        }
     </style>
 </head>
 
@@ -126,9 +138,14 @@
             
                 <div class="col-sm" id="left">
                     <h2>Registration Form</h2>
-                   
+                    
                 </div>
                 <div class="col-sm" id="right">
+                    {% if message %}
+                        <div id="invalid-wrapper">
+                            <p>We do not operate in your country</p>
+                        </div>
+                    {% endif %}
                     <h2>Signup</h2>
                     <form method="post" action="{% url 'signup' %}" id="form">
                         {% csrf_token %}

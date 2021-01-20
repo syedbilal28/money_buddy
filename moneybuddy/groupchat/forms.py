@@ -43,17 +43,21 @@ class SignupForm(forms.ModelForm):
             },
             description="Created from django",
             )
-        account= stripe.Account.create(
-            type="custom",
-            country=self.cleaned_data['country'],
-            email=user.email,
-            capabilities={
-                "card_payments":{"requested":True},
-                "transfers":{"requested":True}
-            }
-            
-        )
-        
+            try:
+                account= stripe.Account.create(
+                    type="custom",
+                    country=self.cleaned_data['country'],
+                    email=user.email,
+                    capabilities={
+                        "card_payments":{"requested":True},
+                        "transfers":{"requested":True}
+                    }
+                    
+                )
+            except:
+                user.delete()
+                customer.delete()
+                return "We do not support payouts in your country"        
         profile=Profile.objects.create(user=user,stripe_customer_id=customer.id,stripe_account_id=account.id)
         print("profile Created")
         profile.save()

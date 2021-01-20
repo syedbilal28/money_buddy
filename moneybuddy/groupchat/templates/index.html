@@ -82,7 +82,7 @@ background-position:center;
             right:12%;
             top:20%;
             padding:2rem 1rem;
-            height:50%;
+            min-height:50%;
             width:35%;
             /* min-width: 400px; */
             /* max-width: 50%; */
@@ -142,7 +142,7 @@ background-position:center;
         #bottom1_img{
             /* position: absolute; */
 
-            width: 60vw;
+            width: 55vw;
             max-height: 90vh;
             background-repeat:no-repeat;
             -webkit-background-size:cover;
@@ -153,7 +153,7 @@ background-position:center;
         }
         #left{
             /* position: absolute; */
-            width: 60vw;
+            width: 55vw;
         }
         #right{
             /* position: absolute; */
@@ -179,6 +179,19 @@ background-position:center;
                 width:20vw;
             }
         }
+        #invalid-wrapper{
+            padding: 10px;
+            margin-bottom: 10px;
+            /* text-align: center; */
+            border-radius: 2rem;
+            border: 1px solid rgb(214, 47, 47);
+            background-color: rgba(214, 47, 47,0.1);
+            color: rgba(219, 29, 29,0.7);
+            /* opacity: 0.1; */
+        }
+        #invalid-text{
+            padding: 10px;
+        }
     </style>
 </head>
 <body>
@@ -195,11 +208,13 @@ background-position:center;
                 
             </nav>
             
-            <div id="form_container">
+            <div id="form_container" class="shadow-lg p-3 mb-5">
                 <form method="post" action="{% url 'index' %}" id="form">
-                    
-                        <p style="display: none;">Invalid Credentials</p>
-                    
+                    {% if message %}
+                        <div id="invalid-wrapper">
+                            <p id="invalid-text">Invalid Username or Password</p>
+                        </div>    
+                    {% endif %}
                     {% csrf_token %}
                     {{ form.as_p }}
                     
@@ -212,9 +227,11 @@ background-position:center;
             <div class="col-sm" id="left">
                 <img id="bottom1_img" src="{% static 'landing_page1.jpeg' %}" alt="">
             </div>
-            <div class="col-sm" id="right">
-                <h1 style="padding-top: 30px;">How it Works</h1>
-                <p id="text" style="padding-top: 20px;"><span>Ayutogroup enables small groups of individuals to come together and save money for short term goals. Here's how it works: members (could be friends or strangers) get together online and decide to contribute a fixed amount of money into a savings pot each month. Every month one member of the group gets to take home the entire savings pot. This continues until everyone in the group has had a chance to take the pot.</span></p>
+            <div class="col-sm d-flex flex-row mb-3" id="right">
+                <div class="p-4 align-self-center" style="text-align: justify;">
+                    <h1 style="padding-top: 30px;">How it Works</h1>
+                    <p id="text" style="padding-top: 20px;"><span>Ayutogroup enables small groups of individuals to come together and save money for short term goals. Here's how it works: members (could be friends or strangers) get together online and decide to contribute a fixed amount of money into a savings pot each month. Every month one member of the group gets to take home the entire savings pot. This continues until everyone in the group has had a chance to take the pot.</span></p>
+                </div>
             </div>
         </div>
     </div>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    
+    <title>Document</title>
+    <style>
+        .container{
+            min-width: 100%;
+            margin: none;
+            padding: 0px;
+        }
+        nav{
+            background-color: #D26450;
+            padding:20px 20px;
+        }
+        #Logout{
+            float: right;
+        }
+        #content-holder{
+            padding: 20px 100px;
+        }
+        #advertising-banner{
+            width: 100%;
+            border: 1px solid black;
+            min-height: 150px;
+        }
+        #button-row{
+            padding: 20px 10px;
+        }
+        .thread{
+            /* height: 18vh; */
+            border-top:1px solid #ccc;
+            border-bottom:1px solid #ccc;
+            position: relative;
+            /* min-height: 100px; */
+            padding-top:1rem;
+        }
+        .thread :hover{
+            cursor: pointer;
+        }
+        #buyout {
+            position: absolute;
+            right:0px;
+            color:black;
+            opacity:0.7;
+            
+        }
+        #participants{
+            color:black;
+            opacity:0.7;
+        }
+        .byserver{
+            color: #D26450;
+        }
+        #join{
+            position: absolute;
+            right:0px;
+            /* bottom:0px; */
+            top:0.5vh;
+            margin-bottom: 0.5rem;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav>
+                
+            <a href="{% url 'index' %}" id="logo">Logo</a>
+            <!-- <a href="" id="work">How it Works</a> -->
+            <a href="{% url 'Logout' %}" id="Logout">Logout</a>
+        
+        </nav> 
+        <div id="content-holder">
+            <div id="advertising-banner" class="row">
+
+            </div>
+            <div class="d-flex" id="button-row">
+                <button type="button" class="btn btn-primary ml-auto p-2" id="Create" onclick="Show_Creation_form()"  data-toggle="modal" data-target="#myModal"><i class="fas fa-plus-circle"></i>Create a new group</button>
+        
+            </div>
+            <div id="threads">
+                <div class="thread">
+                <h3> Looked up by Dummy</h3>                
+                <p id="buyout"><b>Monthly Savings:</b> <span class="byserver">11</span></p>
+                <p id="participants"><b>Participants:</b> <span class="byserver">4</span></p>
+                
+                <button class="btn btn-secondary" id="join" onclick='go_to_thread(event)'>View</button>
+                
+                
+
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -29,14 +29,15 @@ def index(request):
                 login(request,user)
                 return redirect('home')
             else:
-
-                # return redirect('index')
-                return HttpResponse("Invalid Credentials")
+                message="Invalid Credentials"
+                form=LoginForm()
+                return render(request,"index.html",{"form":form,"message":message})
+                
     else:
 
         form = LoginForm()
-        message="Invalid Credentials"
-        return render(request,'index.html',{"form":form,"message":message})
+        
+        return render(request,'index.html',{"form":form})
 def home(request):
     threads=Thread.objects.all()
     profile=Profile.objects.get(user=request.user)
@@ -52,8 +53,12 @@ def Signup(request):
         form = SignupForm(request.POST)
         if form.is_valid():
             user=form.save()
+            if type(user)==str:
+                form=SignupForm()
+                message=user
+                return render(request,'signup.html',{"form":form,"message":message})
             login(request,user)
-            return redirect('index') #FUNCTION KA NAAM
+            return redirect('CardInput') 
     else:
         form = SignupForm()
     return render(request,"signup.html", {"form":form})
@@ -88,42 +93,13 @@ def Create_Thread(request):
 @csrf_exempt
 def Join_Thread(request):
     thread_id=request.POST.get("thread_id")
-    # card=request.POST.get("card")
-    # cvc=request.POST.get("cvc")
-    # exp_month=request.POST.get("exp_month")
-    # exp_year=request.POST.get("exp_year")
-    # profile=Profile.objects.get(user=request.user)
+    profile=Profile.objects.get(user=request.user)
     thread_to_join=Thread.objects.get(pk=thread_id)
     thread_to_join.participants.add(profile)
     thread_to_join.save()
     user=User.objects.get(pk=request.user.id)
     
-    # try:
-    #     Payment_Method=stripe.PaymentMethod.create(
-    #         type="card",
-    #         card={
-    #             "number":card,
-    #             "cvc":cvc,
-    #             'exp_month':exp_month,
-    #             'exp_year':exp_year
-    #         }
-    #     )
-    # except:
-    #     return HttpResponse(f"Invalid card credentials")
-    # profile.payment_method_id=Payment_Method.id
-    # profile.save()
-    # try:
-    #     stripe.PaymentMethod.attach(
-    #         Payment_Method.id,
-    #         customer=profile.stripe_customer_id
-    #     )
-    # except:
-    #     return HttpResponse(f"{user.username} has incomplete data")
-    # stripe.PaymentMethod.attach(0
-   #     Payment_Method.id,
-    #     customer=profile.stripe_account_id
-    # )
-    
+
     return JsonResponse({"Thread":thread_id},safe=False)
 
 def Start(request,thread_id):
@@ -205,7 +181,8 @@ def CardInput(request):
                 }
             )
         except:
-            return HttpResponse(f"Invalid card credentials")
+            message="Invalid Card Credentials"
+            return render(request,'cardinput.html',{"message":message})
         profile.payment_method_id=Payment_Method.id
         profile.save()
         try:
@@ -215,4 +192,5 @@ def CardInput(request):
             )
         except:
             return HttpResponse(f"{user.username} has incomplete data")
+        return redirect("home")
     return render(request,"cardinput.html")

@@ -42,12 +42,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
             print(msg)
             user = loaded_dict_data.get('username')
             # username=user.username
+            message=await self.get_chat_message(msg)
             myresponse = {
                 'message': msg,
-                'username': user
+                'username': user,
+                'time':message.timestamp.time().strftime("%H:%M"),
             }
             print("here")
-
+            
             await self.channel_layer.group_send(
                 self.thread_id,
                 {
@@ -63,6 +65,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def chat_message(self, event):
         print("event",event)
         data=event['text']
+        print(data)
         await self.send(text_data=json.dumps({
             'type': 'websocket.send',
             'text': data
