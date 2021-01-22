@@ -119,9 +119,11 @@
             width:100%;
             height:7.5vh;
             border-top: 1px solid #bfbfbf;
+            
         }
         .chat-message p{
             display: inline-block;
+            
         }
         .sender{
             font-size: 2vmin;
@@ -216,8 +218,8 @@
                         <h4 class="header">Monthly Charge: {{ thread.monthly_charge }}</h4>
                         <p class="header" id="participants"> Participants: {{ thread.participants.all.count }}</p>
                         
-                        {% if User == thread.admin %}
-                        <!-- <button id="start" onclick="Start()" class="btn btn-primary">Start</button> -->
+                        {% if Start %}
+                        <button id="start" onclick="Start()" class="btn btn-primary">Start</button>
                         {% endif %}
                     
             </div>
@@ -325,9 +327,9 @@
     var sender=document.createElement("p")
     sender.className="sender"
     sender.innerText=user
-    var timestamp=document.createElement("span")
-    timestamp.className="time"
-    timestamp.html(timestamp)
+    var timestamp_el=document.createElement("span")
+    timestamp_el.className="time"
+    $(timestamp_el).html(timestamp)
     var br =document.createElement("br")
     var msg=document.createElement("p")
     msg.className="message"
@@ -339,7 +341,7 @@
     // var text=message   //for id just type message.id        
     // p.innerText=text
     div.append(sender)
-    div.append(timestamp)
+    div.append(timestamp_el)
     div.append(br)
     div.append(msg)
     

@@ -65,6 +65,7 @@
            /* height: 100%; */
            border-radius: 0px 1rem 1rem 0px;
            opacity: 0.9;
+           padding-bottom: 30px;
         }
         form{
             /* position: absolute; */
@@ -142,7 +143,7 @@
                 </div>
                 <div class="col-sm" id="right">
                     {% if message %}
-                        <div id="invalid-wrapper">
+                        <div class="alert alert-info">
                             <p>We do not operate in your country</p>
                         </div>
                     {% endif %}

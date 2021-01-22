@@ -27,7 +27,7 @@
         #top{
             position:relative;
             
-            height:80vh;
+            height:95vh;
             width: 100vw;
             background-image: url("{% static 'homepage1.jpg' %}");
             
@@ -192,6 +192,9 @@ background-position:center;
         #invalid-text{
             padding: 10px;
         }
+        .alert{
+            border-radius: 1rem;
+        }
     </style>
 </head>
 <body>
@@ -211,8 +214,8 @@ background-position:center;
             <div id="form_container" class="shadow-lg p-3 mb-5">
                 <form method="post" action="{% url 'index' %}" id="form">
                     {% if message %}
-                        <div id="invalid-wrapper">
-                            <p id="invalid-text">Invalid Username or Password</p>
+                        <div class="alert alert-danger" role="alert">
+                            <p>Invalid Username or Password</p>
                         </div>    
                     {% endif %}
                     {% csrf_token %}

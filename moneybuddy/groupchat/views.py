@@ -8,6 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from django.dispatch import Signal
 from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
 import asyncio
 stripe.api_key = "sk_test_51HpXfpJEfpDOgYo1UQu5PZvq3Rj1bVWGbW1WcyRvh2jBZpJVRyu4kJ8uVzAItLgk07ZCi90VeRHXqMANxYhode1800WXZCTuuR"
 # Create your views here.
@@ -38,9 +39,13 @@ def index(request):
         form = LoginForm()
         
         return render(request,'index.html',{"form":form})
+@login_required
 def home(request):
     threads=Thread.objects.all()
-    profile=Profile.objects.get(user=request.user)
+    try:
+        profile=Profile.objects.get(user=request.user)
+    except:
+        return redirect('index')
     # Participants=[]
     # for i in threads:
     #     Participants.append(len(i.participants))
@@ -66,8 +71,16 @@ def Signup(request):
 def inbox(request,thread_id):
     thread_=Thread.objects.get(pk=int(thread_id))
     messages=ChatMessage.objects.filter(thread=thread_)
-    profile=Profile.objects.get(user=request.user)
-    context={"messages":messages,"thread":thread_,"User":profile}
+    try:
+        profile=Profile.objects.get(user=request.user)
+    except:
+        return redirect('home')
+    if request.user==thread_.admin and thread_.status=='N':
+        start_check=True
+    else:
+        start_check=False
+
+    context={"messages":messages,"thread":thread_,"User":profile,"Start":start_check}
     return render(request,'inbox.html',context)
 def Logout(request):
     logout(request)
@@ -104,6 +117,7 @@ def Join_Thread(request):
 
 def Start(request,thread_id):
     thread=Thread.objects.get(pk=int(thread_id))
+    thread.status="A"
     members=thread.participants.all()
     profiles=[]
     print(members)
@@ -117,8 +131,8 @@ def Start(request,thread_id):
                 )
         except:
             return HttpResponse(f"{User.objects.get(pk=i.pk).username} has no payment source attached")
-    context={'members':profiles}
-    return render(request,'start.html',context)
+    context={'active':True}
+    return render(request,'inbox.html',context)
     # return redirect(inbox(request,thread_id))
 
 @csrf_exempt
