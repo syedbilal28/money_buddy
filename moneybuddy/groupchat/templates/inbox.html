@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/reconnecting-websocket/1.0.0/reconnecting-websocket.js" integrity="sha512-SxQulwFs2B38bmUJtBSo9tD07MDrtCbY8me3AOZ14tRknCPTeMDLvCQV4ekhs8R0o9QPnW5HQanKfveexVcwLA==" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <title>Inbox</title>
@@ -11,7 +11,7 @@
         body{
             margin:0;
             padding:0;
-            overflow-y: hidden;
+            /* overflow-y: hidden; */
         }
         P{
             font-size: 4vmin;
@@ -26,6 +26,8 @@
             margin:0;
             padding:0;
             width:100vw;
+            height: 100%;
+            position: relative;
         }
         nav{
             background-color: #D26450;
@@ -69,11 +71,11 @@
             margin-right: 5rem;
         }
         #ChatHolder{
-            position: relative;
+            /* position: absolute; */
             /* margin-top:9.7vh; */
             /* border:1px solid black; */
             width:82vw;
-            height:91.2vh;
+            height:94%;
             border-right: 1px solid rgba(0,0,0,0.5);
             
         }
@@ -161,7 +163,7 @@
         }
         #ads{
             float:right;
-            margin-top: 10vh;
+            margin-top: 40px;
         }
         #form_holder button{
                 margin-bottom: 9vh;
@@ -219,6 +221,12 @@
                 margin-bottom: 9vh;
             }
         }
+        /* .flex-item{
+            display: flex;
+        }
+        .d-flex{
+            display: flex;
+        } */
     </style>
 </head>
 <body>
@@ -229,10 +237,17 @@
         <!-- <a href="" id="work">How it Works</a> -->
         <a href="{% url 'Logout' %}" id="Logout">Logout</a>
     
-    
-</nav>
-    <div class="container">
         
+</nav>
+
+    
+    <div class="container">
+        <div class="d-flex justify-content-center">
+            <div class="p-2 bd-highlight flex-item">Flex item 1</div>
+            <div class="p-2 bd-highlight flex-item">Flex item 2</div>
+            <div class="p-2 bd-highlight flex-item">Flex item 3</div>
+        </div>    
+    
         <div id="ads">
             <div class="row">
                 For ads
