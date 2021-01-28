@@ -1,1 +1,6 @@
 /venv
+/moneybuddy/venv
+/db.sqlite3
+/moneybuddy/groupchat/migrations
+/moneybuddy/groupchat/__pycache__
+/moneybuddy/moneybuddy/__pycache__

@@ -220,7 +220,19 @@
                         {% csrf_token %}
                         <div class="form-group">
                             <label>Monthly Charge</label>
-                            <input type="number" name="price" class="form-control">
+                            <input type="number" name="price" class="form-control" required>
+                        </div>
+                        <div class="form-group" id="privacy-div">
+                            <label>Privacy</label>
+                            <select name="privacy" class="form-control">
+                                <option value="N" selected="selected">Public</option>
+                                <option value="P">Private</option>
+                                
+                            </select>
+                        </div>
+                        <div class="form-group" id="password-div"  style="display: none;">
+                            <label>Password</label>
+                            <input type="password" name="password" class="form-control">
                         </div>
                         <button type="submit" class="btn btn-outline-success">Create</button>
                     </form>
@@ -230,6 +242,50 @@
                 </div>
               </div>
           
+            </div>
+          </div>
+          <div class="modal fade" id="thread-password-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <form action="">
+                      
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" name="password_thread" id="password-thread" class="form-control">
+                    </div>
+                  </form>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary" onclick="send_req(event)">Join</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <p>Incorrect Password</p>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+              </div>
             </div>
           </div>
         <nav>
@@ -249,29 +305,76 @@
             <div id="threads">
                 {% for thread in Threads %}
                 
-                <div id="thread"  data-info="{{ thread.pk   }}">
-                    <h3> Looked up by {{ thread.admin }}</h3>                
-                    <p id="buyout"><b>Monthly Savings:</b> <span class="byserver">{{ thread.monthly_charge }}</span></p>
-                    <p id="participants"><b>Participants:</b> <span class="byserver">{{ thread.participants.all.count }}</span></p>
-                    {% if User not in thread.participants.all %}
-                        {% if User == thread.admin %}
-                        <button class="btn btn-secondary" id="join" onclick='go_to_thread(event)'>View</button>
-                        
+                    {% if thread.privacy == "P" %}
+                        <div id="thread"  data-info="{{ thread.pk   }}" data-privacy=1>
                         {% else %}
-                        
-                        <button class="btn btn-dark" id="join" onclick='Display_card_form(event)'>Join</button>
-                        {% endif %}   
-                    
-                    {% else %}
-                        <button class="btn btn-secondary" id="join" onclick='go_to_thread(event)'>View</button>
-                    {% endif %}
-                    
-                </div>
+                        <div id="thread"  data-info="{{ thread.pk   }}" data-privacy=0>
+                            {% endif %}
+                            <h3> Looked up by {{ thread.admin }}</h3>                
+                            <p id="buyout"><b>Monthly Savings:</b> <span class="byserver">{{ thread.monthly_charge }}</span></p>
+                            <p id="participants"><b>Participants:</b> <span class="byserver">{{ thread.participants.all.count }}</span></p>
+                            {% if User not in thread.participants.all %}
+                                {% if User == thread.admin %}
+                                <button class="btn btn-secondary" id="join" onclick='go_to_thread(event)'>View</button>
+                                
+                                {% else %}
+                                
+                                <button class="btn btn-dark" id="join" onclick='Display_card_form(event)'>Join</button>
+                                {% endif %}   
+                            
+                            {% else %}
+                                <button class="btn btn-secondary" id="join" onclick='go_to_thread(event)'>View</button>
+                            {% endif %}
+                            
+                        </div>
                 {% endfor %}
             </div>
         </div>
     </div>
     <script>
+        $("#privacy-div").on('click',()=>{
+            
+        $("#privacy-div").change(()=>{
+            
+            console.log($("#privacy-div").find(":selected").val())
+            if ($("#privacy-div").find(":selected").val() == "P"){
+                $("#password-div").css("display","block")
+
+            }
+            else{
+                $("#password-div").css("display","none")
+            }
+        })})
+        function send_req(e){
+            thread_id= event.target.parentNode.parentNode.parentNode.parentNode.dataset.info
+            password=$("#password-thread").val()
+            console.log(thread_id,password)
+            $.ajax({
+                    url: "{% url 'Join' %}",
+                    type:"POST",
+                    data: {
+                    'thread_id':thread_id,
+                    "password":password
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                    console.log(data)
+                        if(data.message == "No Card"){
+                            window.location.href='/card/'
+                        }
+                        if(data.message == "Incorrect password"){
+                            $("#errorModal").modal("show")
+                        }
+                        else{
+                        window.location.href=`${thread_id}`
+                        }
+                    },
+                    error:function(e){
+                        window.location.href='/card/'
+                    }
+                    
+            });
+        }
         function Show_Creation_form(e){
             // document.querySelector("#thread_form").style.display="block"
             $('#createModal').modal('show');
@@ -282,23 +385,32 @@
             window.location.href=thread_id
         }
         function Display_card_form (e){
+            
             var thread_id=event.target.parentNode.dataset.info
-            
-            
-            $.ajax({
-                url: "{% url 'Join' %}",
-                type:"POST",
-                data: {
-                'thread_id':thread_id,
-                },
-                dataType: 'json',
-                success: function (data) {
-                console.log(data)
-                
-                window.location.href=`${thread_id}`
-                
-                }
-        });
+            if(event.target.parentNode.dataset.privacy == 1){
+                document.querySelector("#thread-password-modal").dataset.info=thread_id
+                $("#thread-password-modal").modal('show')
+            }
+            else{
+                $.ajax({
+                    url: "{% url 'Join' %}",
+                    type:"POST",
+                    data: {
+                    'thread_id':thread_id,
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                    console.log(data)
+                    
+                    window.location.href=`${thread_id}`
+                    
+                    },
+                    error:function(e){
+                        window.location.href='/card/'
+                    }
+                    
+            });
+        }
         }
         function go_to_chat(e){
             var card=document.querySelector("#card_number").value

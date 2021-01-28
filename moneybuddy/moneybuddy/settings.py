@@ -123,6 +123,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+MEDIA_URL='/media/'
+MEDIA_ROOT=os.path.join(BASE_DIR,'media')
 STRIPE_API_KEY="sk_test_51HpXfpJEfpDOgYo1UQu5PZvq3Rj1bVWGbW1WcyRvh2jBZpJVRyu4kJ8uVzAItLgk07ZCi90VeRHXqMANxYhode1800WXZCTuuR"
 STRIPE_PUBLIC_KEY="pk_test_51HpXfpJEfpDOgYo1AUkLOo5JlBxu1z4osgu7ZR5Oqy0mdajfqUrhh6mQGiGUTmEwuQebKhRKwqQk1WqmOXFbU3pX00FKTxcDIQ"
 import django

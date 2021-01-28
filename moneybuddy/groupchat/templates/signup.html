@@ -150,8 +150,8 @@
                     <h2>Signup</h2>
                     <form method="post" action="{% url 'signup' %}" id="form">
                         {% csrf_token %}
-                    {{ form.as_p }}    
-                    
+                    {{ signupform.as_p }}    
+                    {{ profileform.as_p }}
                     <button type="submit" class="btn btn-primary" id="submit_button" onclick="auth_confirm">Signup</button>
                     
                 </div>

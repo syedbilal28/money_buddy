@@ -7,46 +7,33 @@ from django.dispatch import receiver
 from django.db.models import Q
 from django_countries.fields import CountryField
 
-# Create your models here.
+
 stripe.api_key=settings.STRIPE_API_KEY
+# Create your models here.
+def to_upload_profile_picture(instance,filename):
+    # path_to_upload=os.path(instance.username+"/ProfilePicture")
+    directory= os.path.join(settings.MEDIA_ROOT,instance.user.username)
+    try:
+        os.stat(directory)
+    except:
+        os.mkdir(directory)
+    directory_profile = os.path.join(directory,'ProfilePicture')
+    try:
+        os.stat(directory_profile)
+    except:
+        os.mkdir(directory_profile)
+    return f"{instance.username}/ProfilePicture/{filename}"
+
+
 class Profile(models.Model):
     user=models.OneToOneField(User,on_delete=models.CASCADE,primary_key=True)
     stripe_customer_id=models.CharField(max_length=120,unique=True)
     stripe_account_id=models.CharField(max_length=120,unique=True)
     country=CountryField()
     payment_method_id=models.CharField(max_length=120,default=None,blank=True,null=True)
+    profile_picture=models.ImageField(upload_to=to_upload_profile_picture,default='defaultprofile.jpg')
     def __str__(self):
         return self.user.username
-# @receiver(post_save,sender=User)
-# def _on_update_user(sender,instance,created,**kwargs):
-#     if created:
-#         # print(country)
-#         print(kwargs)
-#         customer=stripe.Customer.create(
-#             email=instance.email,
-#             name=instance.get_full_name(),
-#             metadata={
-#                 'user_id':instance.pk,
-#                 'username':instance.username
-#             },
-#             description="Created from django",
-#             )
-#         account= stripe.Account.create(
-#             type="custom",
-#             country=country,
-#             email=instance.email,
-#             capabilities={
-#                 "card_payments":{"requested":True},
-#                 "transfers":{"requsted":True}
-#             }
-            
-#         )
-#         profile=Profile.objects.get(user=instance)
-#         profile.stripe_customer_id=customer.id
-#         profile.stripe_account_id=account.id
-#         # profile=Profile.objects.create(user=instance,stripe_customer_id=customer.id)
-#         print("profile Created")
-#         profile.save()
         
 
 class ThreadManager(models.Manager):
@@ -89,6 +76,12 @@ class Thread(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     product_id=models.CharField(max_length=30,blank=True)
     plan_id=models.CharField(max_length=30,blank=True)
+    password=models.CharField(max_length=50,null=True)
+    PRIVACY_CHOICES=[
+        ("P","protected"),
+        ("N","Public")
+    ]
+    privacy=models.CharField(max_length=10,default="N",null=True)
     Status_Choices=[
         ("A","Active"),
         ("N","Not Active")

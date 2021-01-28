@@ -1,5 +1,5 @@
 from django.shortcuts import render,HttpResponse,redirect
-from .forms import LoginForm,SignupForm
+from .forms import LoginForm,SignupForm,ProfileForm
 from django.contrib.auth import login, logout,authenticate
 from .models import Thread,ChatMessage,Profile
 import stripe
@@ -10,6 +10,7 @@ from django.dispatch import Signal
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 import asyncio
+from hashlib import sha256
 stripe.api_key = "sk_test_51HpXfpJEfpDOgYo1UQu5PZvq3Rj1bVWGbW1WcyRvh2jBZpJVRyu4kJ8uVzAItLgk07ZCi90VeRHXqMANxYhode1800WXZCTuuR"
 # Create your views here.
 @csrf_exempt
@@ -55,18 +56,44 @@ def home(request):
 
 def Signup(request):
     if request.method=="POST":
-        form = SignupForm(request.POST)
-        if form.is_valid():
-            user=form.save()
-            if type(user)==str:
-                form=SignupForm()
-                message=user
-                return render(request,'signup.html',{"form":form,"message":message})
-            login(request,user)
-            return redirect('CardInput') 
+        signupform = SignupForm(request.POST)
+        profileform=ProfileForm(request.POST)
+        print(profileform)
+        if signupform.is_valid() and profileform.is_valid():
+            user_data=signupform.save()
+            try:
+                account= stripe.Account.create(
+                        type="custom",
+                        country=profileform.cleaned_data['country'],
+                        email=user_data[0].email,
+                        capabilities={
+                            "card_payments":{"requested":True},
+                            "transfers":{"requested":True}
+                        }
+                        
+                    )
+                profile=Profile.objects.create(
+                    user=user_data[0],
+                    stripe_customer_id=user_data[1].id,
+                    stripe_account_id=account.id,
+                    country=profileform.cleaned_data['country'],
+                    profile_picture=profileform.cleaned_data['profile_picture']
+                    )
+                profile.save()
+                login(request,user_data[0])
+                return redirect('CardInput')
+            except:
+                user_data[0].delete()
+                user_data[1].delete()
+                signupform=SignupForm()
+                profileform=ProfileForm()
+                message="Error"
+                return render(request,'signup.html',{"signupform":signupform,"profileform":profileform,"message":message})
+             
     else:
-        form = SignupForm()
-    return render(request,"signup.html", {"form":form})
+        signupform = SignupForm()
+        profileform=ProfileForm()
+    return render(request,"signup.html", {"signupform":signupform,"profileform":profileform})
     
 def inbox(request,thread_id):
     thread_=Thread.objects.get(pk=int(thread_id))
@@ -92,6 +119,16 @@ def Create_Thread(request):
     created_by=request.user
     print(request.POST)
     thread_price=int(request.POST.get("price"))*100
+    thread_privacy=request.POST.get("privacy")
+    try:
+        thread_password=request.POST.get("password")
+        print(thread_password)
+        hashed_password=sha256(thread_password.encode('utf-8')).hexdigest()
+        print(hashed_password)
+    except:
+        thread_privacy="N"
+        hashed_password=None
+    
     product=stripe.Product.create(name=f"{request.user.username}")
     profile=Profile.objects.get(user=request.user)
     plan=stripe.Plan.create(
@@ -101,13 +138,29 @@ def Create_Thread(request):
         currency='usd',
         amount=thread_price,
     )
-    thread_new=Thread.objects.create(admin=profile,monthly_charge= thread_price/100,product_id=product.id,plan_id=plan.id)
+    thread_new=Thread.objects.create(
+        admin=profile,
+        monthly_charge= thread_price/100,
+        product_id=product.id,
+        plan_id=plan.id,
+        privacy=thread_privacy,
+        password=hashed_password
+    )
     return redirect('home')
 @csrf_exempt
 def Join_Thread(request):
+    
+
     thread_id=request.POST.get("thread_id")
+    thread_password=request.POST.get("password")
+    print(thread_id,thread_password)
+    hashed_password=sha256(thread_password.encode('utf-8')).hexdigest()
     profile=Profile.objects.get(user=request.user)
+    if profile.payment_method_id== None:
+        return JsonResponse({"message":"No Card"}) 
     thread_to_join=Thread.objects.get(pk=thread_id)
+    if thread_to_join.password != hashed_password:
+        return JsonResponse({"message":"Incorrect password"})
     thread_to_join.participants.add(profile)
     thread_to_join.save()
     user=User.objects.get(pk=request.user.id)
