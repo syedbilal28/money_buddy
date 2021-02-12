@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,26 +7,35 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/reconnecting-websocket/1.0.0/reconnecting-websocket.js" integrity="sha512-SxQulwFs2B38bmUJtBSo9tD07MDrtCbY8me3AOZ14tRknCPTeMDLvCQV4ekhs8R0o9QPnW5HQanKfveexVcwLA==" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@600&family=PT+Sans&family=Roboto:wght@300&display=swap" rel="stylesheet">
     <title>Inbox</title>
     <style>
         body{
             margin:0;
             padding:0;
-            /* overflow-y: hidden; */
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+
+            overflow-x: hidden;
         }
         P{
-            font-size: 4vmin;
+            font-size: 2vmin;
         }
         h3{
-            font-size: 4vmin;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 3vmin;
         }
         h4{
-            font-size: 4vmin;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 3vmin;
         }
         .container{
-            margin:0;
-            padding:0;
-            width:100vw;
+            margin:0px;
+            padding:0px;
+            min-width:100%;
             height: 100%;
             position: relative;
         }
@@ -36,7 +46,7 @@
             /* width:100%; */
             /* padding
             -top: 1rem; */
-            padding: 20px;
+            padding: 30px 20px;
         }
         nav a{
             text-decoration: none;
@@ -74,9 +84,12 @@
             /* position: absolute; */
             /* margin-top:9.7vh; */
             /* border:1px solid black; */
+            padding: 0px;
             width:82vw;
             height:94%;
             border-right: 1px solid rgba(0,0,0,0.5);
+            background-color: #ededed;
+            background-image: url({% static 'doodles.png' %});
             
         }
         
@@ -84,7 +97,7 @@
 
             /* position:absolute; */
             width:100%;
-            min-height:11vh;
+            max-height:15vh;
             background-color: #e5a59a;
             padding:1vh 2vw;
         }
@@ -97,7 +110,7 @@
             /* position: absolute; */
             float:right;
             /* top:0px; */
-            padding-top: 2.5rem;;
+            /* padding-top: 2.5rem;; */
         }
         #add{
             float:right;
@@ -112,7 +125,7 @@
             margin-top: 10px;
             padding:0 2vw;
             width:100%;
-            height: 70%;
+            height: 70vh;
             overflow-y: auto;
             /* border:1px solid black; */
         }
@@ -128,23 +141,29 @@
             
         }
         .sender{
-            font-size: 2.5vmin;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 22px;
             font-weight: 600;
             padding-right: 1rem;
         }
         .message{
-            font-size: 2.5vmin;
+            font-family: 'PT Sans', sans-serif;
+            font-size: 18px;
         }
         .time{
-            font-size: 2vmin;
+            font-family: 'PT Sans', sans-serif;
+            font-size: 16px;
         }
         #form_holder{
             /* position: absolute; */
             /* margin-top: 76.6vh; */
             bottom: 0px;
             width:100%;
-            height:15%;
+            height:15vh;
             /* border:1px solid black; */
+        }
+        form{
+            height: 15vh;
         }
         #form_holder textarea{
             margin:2vh 2vw;
@@ -168,7 +187,7 @@
         #form_holder button{
                 margin-bottom: 9vh;
             }
-        .row{
+        .ad{
             /* position: absolute; */
             margin: 0;
             padding:0;
@@ -178,6 +197,22 @@
             height:45vh;
         }
         @media only screen and (max-width: 768px) {
+            .sender{
+            
+            font-size: 18px;
+            
+        }
+        #form_holder textarea{
+        width: 70%;
+        }
+        .message{
+            
+            font-size: 14px;
+        }
+        .time{
+            
+            font-size: 12px;
+        }
             #chat-header{
                 min-height: 5vh;
                 padding: 0px;
@@ -195,6 +230,13 @@
             #form_holder button{
                 margin-bottom: 9vh;
             }
+            img{
+                height: 50px;
+                width: 50px;
+            }
+            .participant-name{
+            font-size: 18px;
+        }
         }
         @media only screen and (max-width: 350px) {
             #chat-header{
@@ -220,12 +262,32 @@
             #form_holder button{
                 margin-bottom: 9vh;
             }
+            
+        }
+        img{
+            max-height: 100px;
+            max-width: 100px;
+           min-height: 10px;
+           min-width: 10px;
+           border-radius: 50%;
         }
         /* .flex-item{
             display: flex;
         }
         .d-flex{
             display: flex;
+        } */
+        #info-holder{
+            min-width: 100%;
+            padding: 40px;
+            text-align: center;
+            background-color:  #f2f2f2;
+        }
+        .col-{
+            padding: 0px 10px;
+        }
+        /* .participant-name{
+            font-size: 24px;
         } */
     </style>
 </head>
@@ -242,21 +304,33 @@
 
     
     <div class="container">
-        <div class="d-flex justify-content-center">
-            <div class="p-2 bd-highlight flex-item">Flex item 1</div>
+        <!-- <div class="d-flex justify-content-center" style="text-align: center;">
+            {% for participant in thread.participants.all %}
+            <div class="p-2 bd-highlight flex-item">
+                <img src="{{ participant.profile_picture.url }}" alt="" class="rounded-circle">
+                <p>{{ participant.user.username }}</p>
+            </div>
+            {% endfor %}
             <div class="p-2 bd-highlight flex-item">Flex item 2</div>
             <div class="p-2 bd-highlight flex-item">Flex item 3</div>
-        </div>    
-    
-        <div id="ads">
-            <div class="row">
+        </div>     -->
+        <div class="row justify-content-center" id="info-holder">
+            {% for participant in thread.participants.all %}
+            <div class="col-">
+                <img src="{{ participant.profile_picture.url }}" alt="">
+                <p class="participant-name">{{ participant.user.username }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        <div id="ads" class="col-2">
+            <div class="row ad">
                 For ads
             </div>
-            <div class="row">
+            <div class="row ad">
                 For ads
             </div>
         </div>
-        <div id="ChatHolder">
+        <div id="ChatHolder" class="col-10">
             <div id="chat-header">
                 
 
@@ -289,6 +363,17 @@
     </div>
     
 <script>
+    $(window).on('resize', function() {
+        var win = $(this);
+        if (win.width() < 768) {
+            $('#ChatHolder').removeClass('col-10');
+            $('#ChatHolder').addClass('col-12');
+
+        } 
+        // else {
+        //     $('#123').removeClass('btn-lg');
+        // }
+        });
     function Start(){
         thread_id={{ thread.pk }}
         window.location=`{% url 'Start' thread_id=thread.pk %}`
