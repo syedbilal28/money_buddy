@@ -17,7 +17,8 @@ class ProfileForm(forms.ModelForm):
             'country',
             'profile_picture'
         ]
-    
+    # def save(self,commit=True):
+
 class SignupForm(forms.ModelForm):
     # profile=ProfileForm()
     

@@ -6,7 +6,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.db.models import Q
 from django_countries.fields import CountryField
-
+import os
 
 stripe.api_key=settings.STRIPE_API_KEY
 # Create your models here.
@@ -22,7 +22,7 @@ def to_upload_profile_picture(instance,filename):
         os.stat(directory_profile)
     except:
         os.mkdir(directory_profile)
-    return f"{instance.username}/ProfilePicture/{filename}"
+    return f"{instance.user.username}/ProfilePicture/{filename}"
 
 
 class Profile(models.Model):
