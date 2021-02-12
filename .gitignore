@@ -1,1 +1,4 @@
 /venv
+/moneybuddy/moneybuddy/__pycache__
+/moneybuddy/groupchat/migrations
+/moneybuddy/groupchat/__pycache__

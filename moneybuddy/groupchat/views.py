@@ -10,6 +10,13 @@ from django.dispatch import Signal
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 import asyncio
+import paypalrestsdk
+import requests
+paypalrestsdk.configure({
+    'mode':'sandbox',
+    'client_id':'AWWN4IGDAUwzQQJvVtIqAMdEFr-Og8tsrgj4tt6-hnDcCRnWiX0kj8Jn5yWLsK5F9BoNWuLvcQtvBP6R',
+    'client_secret':'EOHznKaggJuJEUCQNN4AVtYqB3bLTQTE3ISrzHyo9Bn-e0PJ3Do5fKPv9-OvMmtOzTkwCNHRARpLEkho'
+})
 stripe.api_key = "sk_test_51HpXfpJEfpDOgYo1UQu5PZvq3Rj1bVWGbW1WcyRvh2jBZpJVRyu4kJ8uVzAItLgk07ZCi90VeRHXqMANxYhode1800WXZCTuuR"
 # Create your views here.
 @csrf_exempt
@@ -208,3 +215,8 @@ def CardInput(request):
             return HttpResponse(f"{user.username} has incomplete data")
         return redirect("home")
     return render(request,"cardinput.html")
+
+def CreateProductPaypal(request):
+    url="https://api-m.sandbox.paypal.com/v1/catalogs/products"
+    headers={"Content-Type":"application/json","Authorization":" Bearer A21AAJSyqSzvhuW6g52RUoWmE4AZZrep2oUl2cFut_or5vBuyxq_IgHYhkzObP_1fMvHh4OzQRKs7qGjTuMoj5gNvrm5q4y5A"}
+    data={"name":"video streaming","description":"video streaming service","type":"SERVICE","category":"SOFTWARE"}
