@@ -1,19 +1,8 @@
 /venv
-<<<<<<< HEAD
-<<<<<<< HEAD
 /moneybuddy/moneybuddy/__pycache__
 /moneybuddy/groupchat/migrations
 /moneybuddy/groupchat/__pycache__
-=======
-=======
->>>>>>> c403223645d4ed96b53938bd96558e8a49dde449
+
 /moneybuddy/venv
-/db.sqlite3
-/moneybuddy/groupchat/migrations
-/moneybuddy/groupchat/__pycache__
-<<<<<<< HEAD
-/moneybuddy/moneybuddy/__pycache__
->>>>>>> c403223645d4ed96b53938bd96558e8a49dde449
-=======
-/moneybuddy/moneybuddy/__pycache__
->>>>>>> c403223645d4ed96b53938bd96558e8a49dde449
+/moneybuddy/db.sqlite3
+
