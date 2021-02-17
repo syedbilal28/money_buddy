@@ -9,15 +9,24 @@ data={
 
 }
 response =requests.post("https://api.sandbox.paypal.com/v1/oauth2/token",headers=headers,data=data,auth=('AWWN4IGDAUwzQQJvVtIqAMdEFr-Og8tsrgj4tt6-hnDcCRnWiX0kj8Jn5yWLsK5F9BoNWuLvcQtvBP6R','EOHznKaggJuJEUCQNN4AVtYqB3bLTQTE3ISrzHyo9Bn-e0PJ3Do5fKPv9-OvMmtOzTkwCNHRARpLEkho'))
-print(response.json())
+data=response.json()
+print(data['access_token'])
+# import paypalrestsdk
+# res= paypalrestsdk.configure({
+#     'mode':'sandbox',
+#     'client_id':'AWWN4IGDAUwzQQJvVtIqAMdEFr-Og8tsrgj4tt6-hnDcCRnWiX0kj8Jn5yWLsK5F9BoNWuLvcQtvBP6R',
+#     'client_secret':'EOHznKaggJuJEUCQNN4AVtYqB3bLTQTE3ISrzHyo9Bn-e0PJ3Do5fKPv9-OvMmtOzTkwCNHRARpLEkho'
+# })
+# print(res)
 # Create a product
-# headers = {
-#     'Content-Type': 'application/json',
-#     'Authorization': 'Bearer A21AAJSyqSzvhuW6g52RUoWmE4AZZrep2oUl2cFut_or5vBuyxq_IgHYhkzObP_1fMvHh4OzQRKs7qGjTuMoj5gNvrm5q4y5A',
-#     'PayPal-Request-Id': 'CJLAT8A9QJ4YQ',
-# }
-# data='{"name": "Video Streaming Service","description": "Video streaming service","type": "SERVICE","category": "SOFTWARE","image_url": "https://example.com/streaming.jpg","home_url": "https://example.com/home"}'
-# response = requests.get('https://api-m.sandbox.paypal.com/v1/catalogs/products?page_size=2&page=1&total_required=true', headers=headers)
+headers = {
+    'Content-Type': 'application/json',
+    'Authorization': f'Bearer {data["access_token"]}',
+    'PayPal-Request-Id': 'ea12344OHAFOSIHG12407asdflAaofaifh2390147asfhASADA',
+}
+data='{"name": "Video Streaming Service","description": "Video streaming service","type": "SERVICE", "category":"ELECTRONIC_CASH"}'
+response = requests.post('https://api-m.sandbox.paypal.com/v1/catalogs/products',headers=headers,data=data)
+print(response.json())
 # print(response.text)
 
 # curl -v -X GET https://api-m.sandbox.paypal.com/v1/catalogs/products?page_size=2&page=1&total_required=true \

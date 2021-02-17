@@ -6,7 +6,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.db.models import Q
 from django_countries.fields import CountryField
-
+import os
 
 stripe.api_key=settings.STRIPE_API_KEY
 # Create your models here.
@@ -22,13 +22,13 @@ def to_upload_profile_picture(instance,filename):
         os.stat(directory_profile)
     except:
         os.mkdir(directory_profile)
-    return f"{instance.username}/ProfilePicture/{filename}"
+    return f"{instance.user.username}/ProfilePicture/{filename}"
 
 
 class Profile(models.Model):
     user=models.OneToOneField(User,on_delete=models.CASCADE,primary_key=True)
-    stripe_customer_id=models.CharField(max_length=120,unique=True)
-    stripe_account_id=models.CharField(max_length=120,unique=True)
+    stripe_customer_id=models.CharField(max_length=120,unique=True,null=True,blank=True)
+    stripe_account_id=models.CharField(max_length=120,unique=True,null=True,blank=True)
     country=CountryField()
     payment_method_id=models.CharField(max_length=120,default=None,blank=True,null=True)
     profile_picture=models.ImageField(upload_to=to_upload_profile_picture,default='defaultprofile.jpg')
@@ -71,11 +71,16 @@ class Thread(models.Model):
     
     admin= models.ForeignKey(Profile,on_delete=models.CASCADE,related_name="Admin")
     participants=models.ManyToManyField(Profile,related_name="Participants")
+    PAYMENT_CHOICES=[
+        ("P","Paypal"),
+        ("S","Stripe")
+    ]
+    payment_method=models.CharField(max_length=1,choices=PAYMENT_CHOICES,default=None)
     monthly_charge=models.IntegerField(default=0)
     updated = models.DateTimeField(auto_now=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     product_id=models.CharField(max_length=30,blank=True)
-    plan_id=models.CharField(max_length=30,blank=True)
+    plan_id=models.CharField(max_length=30,blank=True,null=True)
     password=models.CharField(max_length=50,null=True)
     PRIVACY_CHOICES=[
         ("P","protected"),
