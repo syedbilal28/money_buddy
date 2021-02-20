@@ -66,7 +66,10 @@ class ThreadManager(models.Manager):
                 return obj, True
             return None, False
     
-
+class PaypalSubscription(models.Model):
+    user=models.ForeignKey(Profile,on_delete=models.CASCADE)
+    thread=models.ForeignKey('Thread',on_delete=models.CASCADE)
+    subscription_id=models.CharField(max_length=5000)
 class Thread(models.Model):
     
     admin= models.ForeignKey(Profile,on_delete=models.CASCADE,related_name="Admin")

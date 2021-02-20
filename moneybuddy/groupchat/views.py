@@ -1,7 +1,7 @@
 from django.shortcuts import render,HttpResponse,redirect
 from .forms import LoginForm,SignupForm,ProfileForm
 from django.contrib.auth import login, logout,authenticate
-from .models import Thread,ChatMessage,Profile
+from .models import Thread,ChatMessage,Profile,PaypalSubscription
 import stripe
 import json
 from django.views.decorators.csrf import csrf_exempt
@@ -11,10 +11,11 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 import asyncio,json
 import paypalrestsdk
+from paypalrestsdk import BillingPlan
 from hashlib import sha256
 import requests
 import random
-from .paypal import GenerateToken
+from . import paypal
 from .stripefuncs import CreateAccount,CreateCustomer,CreatePaymentMethod,CreatePlan
 paypalrestsdk.configure({
     'mode':'sandbox',
@@ -58,8 +59,9 @@ def home(request):
         profile=Profile.objects.get(user=request.user)
     except:
         return redirect('index')
-
-    access_token=GenerateToken()
+    request.session['access_token']=paypal.GenerateToken()
+    access_token=request.session['access_token']
+    # access_token=paypal.GenerateToken()
 
     context={"Threads":threads,"User":profile}
     return render(request,"threads.html",context)
@@ -93,7 +95,23 @@ def Signup(request):
         signupform = SignupForm()
         profileform=ProfileForm()
     return render(request,"signup.html", {"signupform":signupform,"profileform":profileform})
-    
+
+@csrf_exempt
+def GetPlanId(request):
+    thread_id=request.POST.get("thread_id")
+    thread=Thread.objects.get(pk=int(thread_id))
+    return JsonResponse({"plan_id":thread.plan_id},safe=False)
+@csrf_exempt
+def CreatePaypalSubscription(request):
+    plan_id=request.POST.get("plan_id")
+    subscription_id=request.POST.get("subscription_id")
+    profile= Profile.objects.get(user=request.user)
+    thread=Thread.objects.get(plan_id=plan_id)
+    sub=PaypalSubscription.objects.create(user=profile,thread=thread,subscription_id=subscription_id)
+    access_token=request.session.get("access_token")
+    paypal.PauseSubscription(subscription_id,access_token)
+    thread.participants.add(profile)
+    thread.save()
 def inbox(request,thread_id):
     thread_=Thread.objects.get(pk=int(thread_id))
     messages=ChatMessage.objects.filter(thread=thread_)
@@ -119,7 +137,7 @@ def Create_Thread(request):
     print(request.POST)
     payment_method= request.POST.get("payment_method")
     print(payment_method)
-    thread_price=int(request.POST.get("price"))*100
+    thread_price=int(request.POST.get("price"))
     thread_privacy=request.POST.get("privacy")
     profile=Profile.objects.get(user=request.user)
     
@@ -132,6 +150,7 @@ def Create_Thread(request):
         thread_privacy="N"
         hashed_password=None
     if payment_method =="stripe":
+        thread_price*=100
         if profile.stripe_customer_id == None:
             account= CreateAccount(created_by)
             if type(account) == str:
@@ -151,93 +170,23 @@ def Create_Thread(request):
         payment_method=payment_method
     )
     else:
+        print("PAYPALLL")
         req_id=request.user.username+str(random.randint(0,999999999))
         hashed_request_id=sha256(req_id.encode('utf-8')).hexdigest()
-        try:
-            global access_token
-            access_token=str(access_token)
-            headers = {
-                'Content-Type': 'application/json',
-                'Authorization': f'Bearer {access_token}',
-                'PayPal-Request-Id': hashed_request_id,
-            }
-            
-            data={"name": f"{request.user.username + thread_price}","type": "SERVICE"}
-            data=str(data)
-            response = requests.post('https://api-m.sandbox.paypal.com/v1/catalogs/products',headers=headers,data=data)
-            data=response.json()
-            thread_new=Thread.objects.create(
-                admin=profile,
-                monthly_charge= thread_price/100,
-                product_id=data['id'],
-                payment_method="paypal",
-                privacy=thread_privacy,
-                password=hashed_password
-            )
-        except:
-            #fetch access Token
-            
-            headers={
-                "Accept":"application/json",
-                "Accept-Language":"en_US",
-            }
-            data={
-                "grant_type":"client_credentials"
-
-            }
-            response =requests.post("https://api.sandbox.paypal.com/v1/oauth2/token",headers=headers,data=data,auth=('AWWN4IGDAUwzQQJvVtIqAMdEFr-Og8tsrgj4tt6-hnDcCRnWiX0kj8Jn5yWLsK5F9BoNWuLvcQtvBP6R','EOHznKaggJuJEUCQNN4AVtYqB3bLTQTE3ISrzHyo9Bn-e0PJ3Do5fKPv9-OvMmtOzTkwCNHRARpLEkho'))
-            data=response.json()
-
-            access_token=str(data['access_token'])
-            #Create product
-            headers = {
-                'Content-Type': 'application/json',
-                'Authorization': f'Bearer {access_token}',
-                'PayPal-Request-Id': hashed_request_id,
-            }
-            
-            data={"name": f"{request.user.username +str(thread_price)}","description":f"thread created by {request.user.username}","type": "SERVICE","category":"ELECTRONIC_CASH"}
-            data=json.dumps(data)
-            # data='{"name": "Video Streaming Service","description": "Video streaming service","type": "SERVICE", "category":"ELECTRONIC_CASH"}'
-
-            print(data)
-            response = requests.post('https://api-m.sandbox.paypal.com/v1/catalogs/products',headers=headers,data=data)
-            print(response.text)
-            data=response.json()
-
-            #Create Plan
-            # url="https://api-m.sandbox.paypal.com/v1/billing/plans"
-            # plan_req_id= request.user.username+data['id']
-            # hashed_plan_request_id=sha256(plan_req_id.encode('utf-8')).hexdigest()
-            # headers={
-            #     "Accept":"application/json",
-            #     'Authorization': f'Bearer {access_token}',
-            #     'Content-Type': 'application/json',
-            #     "Prefer":"return=representation"
-            # }
-            # plan_data={
-            #     "product_id":data['id'],
-            #     "name":"Basic Plan",
-            #     "description":"Basic Plan",
-            #     "type":"INFINITE",
-            #     "billing_cycles":[
-            #         "frequency":{
-            #             "interval_unit":"MONTH",
-            #             "interval_count":1
-            #         }
-            #     ]
-            # }
-            thread_new=Thread.objects.create(
-                admin=profile,
-                monthly_charge= thread_price/100,
-                product_id=data['id'],
-                payment_method="paypal",
-                privacy=thread_privacy,
-                password=hashed_password
-            )
-
-    
-    # return redirect('home')
+        
+        # global access_token
+        access_token=request.session.get('access_token')
+        product=paypal.CreateProduct(access_token,hashed_request_id,request.user,thread_price)
+        plan=paypal.CreatePlan(access_token,product,thread_price)
+        thread_new=Thread.objects.create(
+            admin=profile,
+            monthly_charge= thread_price,
+            product_id=product,
+            plan_id=plan,
+            payment_method="paypal",
+            privacy=thread_privacy,
+            password=hashed_password
+        )
     return JsonResponse({"message":"Success"},status=200)
 @csrf_exempt
 def Join_Thread(request):
@@ -355,8 +304,3 @@ def CardInput(request):
             return HttpResponse(f"{user.username} has incomplete data")
         return redirect("home")
     return render(request,"cardinput.html")
-
-def CreateProductPaypal(request):
-    url="https://api-m.sandbox.paypal.com/v1/catalogs/products"
-    headers={"Content-Type":"application/json","Authorization":" Bearer A21AAJSyqSzvhuW6g52RUoWmE4AZZrep2oUl2cFut_or5vBuyxq_IgHYhkzObP_1fMvHh4OzQRKs7qGjTuMoj5gNvrm5q4y5A"}
-    data={"name":"video streaming","description":"video streaming service","type":"SERVICE","category":"SOFTWARE"}

@@ -11,5 +11,7 @@ urlpatterns=[
     path('join/',views.Join_Thread,name="Join"),
     path('Start/<str:thread_id>/',views.Start,name="Start"),
     path("hooks/",views.my_webhook_view,name="Hook"),
-    path("card/",views.CardInput,name="CardInput")
+    path("card/",views.CardInput,name="CardInput"),
+    path("plan/",views.GetPlanId,name="Plan"),
+    path("PaypalSubscribe/",views.CreatePaypalSubscription,name="CreateSubscription")
 ]

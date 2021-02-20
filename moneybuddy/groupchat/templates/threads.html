@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>Home</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -201,7 +202,9 @@
     </style>
 </head>
 <body>
-   
+    <script
+    src="https://www.paypal.com/sdk/js?client-id=AWWN4IGDAUwzQQJvVtIqAMdEFr-Og8tsrgj4tt6-hnDcCRnWiX0kj8Jn5yWLsK5F9BoNWuLvcQtvBP6R&vault=true">
+</script>
    
     <div class="container">
         <div id="cardModal" class="modal fade" role="dialog">
@@ -234,6 +237,28 @@
                         </div>
                         <button type="submit" class="btn btn-outline-success" id="CardEnterButton" onclick="go_to_chat(event)">Submit</button>
                     <!-- </div> -->
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+          
+            </div>
+          </div>
+        
+          <div id="paypalModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+          
+              <!-- Modal content-->
+              <div class="modal-content">
+                <div class="modal-header">
+                 
+                  <h4 class="modal-title">Join Via Paypal</h4>
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body cardform">
+                    <div id="paypal-button-container"></div>
+
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Close</button>
@@ -346,12 +371,13 @@
                 {% for thread in Threads %}
                 
                     {% if thread.privacy == "P" %}
-                        <div id="thread"  data-info="{{ thread.pk   }}" data-privacy=1>
+                        <div id="thread"  data-info="{{ thread.pk   }}" data-privacy=1 data-payment="{{ thread.payment_method }}">
                         {% else %}
-                        <div id="thread"  data-info="{{ thread.pk   }}" data-privacy=0>
+                        <div id="thread"  data-info="{{ thread.pk   }}" data-privacy=0 data-payment="{{ thread.payment_method }}">
                             {% endif %}
                             {% if thread.payment_method == "paypal" %}
                                 <i class="fab fa-cc-paypal" style="font-size: 50px;position: absolute;right: 80px;"></i>
+                                
                             {% else %}
                             <i class="fab fa-cc-stripe" style="font-size: 50px;position: absolute;right: 80px;"></i>
                             {% endif %}
@@ -365,6 +391,7 @@
                                 {% else %}
                                 
                                 <button class="btn btn-dark" id="join" onclick='Display_card_form(event)'>Join</button>
+                                    
                                 
                                 {% endif %}   
                             
@@ -378,10 +405,37 @@
             </div>
         </div>
     </div>
+    <!-- <script>
+        paypal.Buttons().render('#paypal-button-container');
+      </script> -->
     <script>
+        
         function create_thread_paypal(event){
             $("#payment-method").val("paypal")
-            $("#thread-creation-form").submit()
+            // $("#thread-creation-form").submit()
+            var form = document.querySelector("#thread-creation-form")
+            var price= form.children[0].children[1].value
+            var privacy = form.children[1].children[1].value
+            var password= form.children[2].children[1].value
+            var payment_method="paypal"
+            $.ajax({
+                url:"{% url 'create-thread' %}",
+                method:"POST",
+                data:{
+                    "csrfmiddlewaretoken":"{{ csrf_token }}",
+                    "price": price,
+                    "privacy":privacy,
+                    "password":password,
+                    "payment_method":payment_method,
+                },
+                success:function(e){
+                    console.log(e,status)
+                    CallHome()
+                    
+                    }
+            
+            })
+            
         }
         function create_thread_stripe(event){
             $("#payment-method").val("stripe")
@@ -491,9 +545,23 @@
         function Display_card_form (e){
             
             var thread_id=event.target.parentNode.dataset.info
+            var thread_payment_method=event.target.parentNode.dataset.payment
             if(event.target.parentNode.dataset.privacy == 1){
                 document.querySelector("#thread-password-modal").dataset.info=thread_id
+                document.querySelector("#thread-password-modal").dataset.payment=thread_payment_method
                 $("#thread-password-modal").modal('show')
+            }
+            if (thread_payment_method == "paypal"){
+                $.ajax({
+                    url:"{% url 'Plan' %}",
+                    type:"POST",
+                    data:{"thread_id":thread_id},
+                    dataType:"json",
+                    success:function(data){
+                        window.plan_id =data.plan_id
+                    }  
+                })
+                $("#paypalModal").modal("show")
             }
             else{
                 $.ajax({
@@ -501,6 +569,7 @@
                     type:"POST",
                     data: {
                     'thread_id':thread_id,
+                    "payment_method":thread_payment_method
                     },
                     dataType: 'json',
                     success: function (data) {
@@ -516,6 +585,39 @@
             });
         }
         }
+        paypal.Buttons({
+
+createSubscription: function(data, actions) {
+
+  return actions.subscription.create({
+    
+    'plan_id': window.plan_id
+
+  });
+
+},
+
+
+onApprove: function(data, actions) {
+    $.ajax({
+        url:"{% url 'CreateSubscription' %}",
+        type:"POST",
+        data:{
+            "plan_id":window.plan_id,
+            "subscription_id":data.subscriptionID
+        },
+        dataType:'json',
+        success:function(){
+            CallHome()
+            // alert('You have successfully created subscription ' + data.subscriptionID);
+        }
+    })
+  
+
+}
+
+
+}).render('#paypal-button-container');
         function go_to_chat(e){
             var card=document.querySelector("#card_number").value
             var thread_id=document.querySelector(".cardform").dataset.info
