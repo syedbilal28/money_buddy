@@ -69,7 +69,7 @@ def home(request):
 def Signup(request):
     if request.method=="POST":
         signupform = SignupForm(request.POST)
-        profileform=ProfileForm(request.POST)
+        profileform=ProfileForm(request.POST,request.FILES)
         print(profileform)
         if signupform.is_valid() and profileform.is_valid():
             user=signupform.save()
@@ -112,14 +112,15 @@ def CreatePaypalSubscription(request):
     paypal.PauseSubscription(subscription_id,access_token)
     thread.participants.add(profile)
     thread.save()
+    return JsonResponse({"active":True})
 def inbox(request,thread_id):
-    thread_=Thread.objects.get(pk=int(thread_id))
+    thread_=Thread.objects.get(pk=eval(thread_id))
     messages=ChatMessage.objects.filter(thread=thread_)
     try:
         profile=Profile.objects.get(user=request.user)
     except:
         return redirect('home')
-    if request.user==thread_.admin and thread_.status=='N':
+    if profile==thread_.admin and thread_.status=='N':
         start_check=True
     else:
         start_check=False
@@ -217,19 +218,29 @@ def Start(request,thread_id):
     thread=Thread.objects.get(pk=int(thread_id))
     thread.status="A"
     members=thread.participants.all()
+    if len(members) <4:
+        return render(request,"inbox.html",{"alert":True,"message":"Cannot start until 4 members Join"})
     profiles=[]
     print(members)
-    for i in members:
-        profile_user=Profile.objects.get(user=i)
-        profiles.append(profile_user)
-        try:
-            subscription = stripe.Subscription.create(
-            customer=profile_user.stripe_customer_id,
-            items=[{'plan': thread.plan_id}],
-                )
-        except:
-            return HttpResponse(f"{User.objects.get(pk=i.pk).username} has no payment source attached")
-    context={'active':True}
+    if thread.payment_method=="stripe":
+        for i in members:
+            profile_user=Profile.objects.get(user=i)
+            profiles.append(profile_user)
+            try:
+                subscription = stripe.Subscription.create(
+                customer=profile_user.stripe_customer_id,
+                items=[{'plan': thread.plan_id}],
+                    )
+            except:
+                return HttpResponse(f"{User.objects.get(pk=i.pk).username} has no payment source attached")
+        context={'active':True}
+    elif thread.payment_method=="paypal":
+        for i in members:
+            profile_user=Profile.objects.get(user=i)
+            subscription=PaypalSubscription.objects.get(user=profile)
+            access_token=request.session.get("access_token")
+            paypal.ResumeSubscription(subscription_id=subscription.subscription_id,access_token=access_token)
+        context={"active":True}
     return render(request,'inbox.html',context)
     # return redirect(inbox(request,thread_id))
 

@@ -97,7 +97,7 @@
 
             /* position:absolute; */
             width:100%;
-            max-height:15vh;
+            /* max-height:15vh; */
             background-color: #e5a59a;
             padding:1vh 2vw;
         }
@@ -332,13 +332,17 @@
         </div>
         <div id="ChatHolder" class="col-10">
             <div id="chat-header">
-                
-
+                        {% if alert %}
+                        <div class="alert alert-warning" role="alert">
+                            {{ message }}
+                        </div>
+                        {% endif %}
+                        
                         <h3 class="header">Created By: {{ thread.admin }}</h3>
                         <h4 class="header">Monthly Charge: {{ thread.monthly_charge }}</h4>
                         <p class="header" id="participants"> Participants: {{ thread.participants.all.count }}</p>
                         
-                        {% if Start %}
+                        {% if Start == 1 %}
                         <button id="start" onclick="Start()" class="btn btn-primary">Start</button>
                         {% endif %}
                     
@@ -375,8 +379,8 @@
         // }
         });
     function Start(){
-        thread_id={{ thread.pk }}
-        window.location=`{% url 'Start' thread_id=thread.pk %}`
+        thread_id="{{ thread.pk }}"
+        window.location=`/Start/${thread_id}`
     }
     // For window.socket initiation
     var loc=window.location
