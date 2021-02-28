@@ -34,11 +34,15 @@ def CreatePlan(access_token,product_id,thread_price):
                 'Content-Type': 'application/json',
                 "Prefer":"return=representation"
             }
-    data={"product_id":f"{product_id}","name": "Basic Plan","description": "Basic plan","type":"FIXED","status":"ACTIVE","billing_cycles": [{"frequency": {"interval_unit": "MONTH","interval_count": 1},"tenure_type": "TRIAL","sequence": 1,"total_cycles": 12},{"frequency": {"interval_unit": "MONTH","interval_count": 1},"tenure_type": "REGULAR","sequence": 2,"total_cycles": 12,"pricing_scheme": {"fixed_price": {"value": f"{thread_price}","currency_code": "USD"}}}],"payment_preferences": {"auto_bill_outstanding": "true","setup_fee_failure_action": "CONTINUE","payment_failure_threshold": 3},"taxes": {"percentage": "1","inclusive": "false"}}
+    data={"product_id":f"{product_id}","name": "Basic Plan","description": "Basic plan","type":"FIXED","status":"ACTIVE","billing_cycles": [{"frequency": {"interval_unit": "MONTH","interval_count": 1},"tenure_type": "REGULAR","sequence": 1,"total_cycles": 12,"pricing_scheme": {"fixed_price": {"value": f"{thread_price}","currency_code": "USD"}}}],"payment_preferences": {"auto_bill_outstanding": "true","setup_fee_failure_action": "CONTINUE","payment_failure_threshold": 3},"taxes": {"percentage": "1","inclusive": "false"}}
     data=json.dumps(data)
     response = requests.post(url,headers=headers,data=data)
-    response=response.json()
-    return response['id']
+    print(response.json())
+    if(response.status_code == 201):
+      response=response.json()
+      return response['id']
+    else:
+      return "Could not be created"
 def PauseSubscription(subscription_id,access_token):
     url=f"https://api-m.sandbox.paypal.com/v1/billing/subscriptions/{subscription_id}/suspend"
     headers={
@@ -102,3 +106,37 @@ def CreateSubscription():
         "cancel_url": "https://example.com/cancelUrl"
       }
     }
+
+def SendPayout(email_receiver,amount,payout_id,access_token):
+  url="https://api-m.sandbox.paypal.com/v1/payments/payouts"
+  headers={
+    "Content-Type":"application/json",
+    "Authoization":f"Bearer {access_token}"
+  }
+  data={
+    "sender_batch_header":{
+      "sender_batch_id":f"{payout_id}",
+      "email_subject": "You have a payout!",
+      "email_message": "You have received a payout! Thanks for using our service!"
+    },
+    "items":[
+      {
+        "recipient_type": "EMAIL",
+      "amount": {
+        "value": f"{amount}",
+        "currency": "USD"
+      },
+      "note": "Thanks for your patronage!",
+      "sender_item_id": f"{payout_id}",
+      "receiver": f"{email_receiver}"
+      }
+    ]
+  }
+  data=json.dumps(data)
+  try:
+    response=requests.post(url,headers=headers,data=data)
+  except:
+    access_token=GenerateToken()
+    response=requests.post(url,headers=headers,data=data)
+  response=response.json()
+  return response

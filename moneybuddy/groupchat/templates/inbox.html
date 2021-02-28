@@ -376,7 +376,14 @@
         });
     function Start(){
         thread_id={{ thread.pk }}
-        window.location=`{% url 'Start' thread_id=thread.pk %}`
+        // window.location=`/Start/${thread_id}`
+        $.ajax({
+            url:`/Start/${thread_id}`,
+            method:"GET",
+            success:function(e){
+                console.log("Started")
+            }
+        })
     }
     // For window.socket initiation
     var loc=window.location

@@ -119,7 +119,7 @@ def inbox(request,thread_id):
         profile=Profile.objects.get(user=request.user)
     except:
         return redirect('home')
-    if request.user==thread_.admin and thread_.status=='N':
+    if profile==thread_.admin and thread_.status=='N' and len(thread.participants.all()) >3:
         start_check=True
     else:
         start_check=False
@@ -216,19 +216,30 @@ def Join_Thread(request):
 def Start(request,thread_id):
     thread=Thread.objects.get(pk=int(thread_id))
     thread.status="A"
+    thread.save()
     members=thread.participants.all()
     profiles=[]
     print(members)
-    for i in members:
-        profile_user=Profile.objects.get(user=i)
-        profiles.append(profile_user)
-        try:
-            subscription = stripe.Subscription.create(
-            customer=profile_user.stripe_customer_id,
-            items=[{'plan': thread.plan_id}],
-                )
-        except:
-            return HttpResponse(f"{User.objects.get(pk=i.pk).username} has no payment source attached")
+    if thread.payment_method =="stripe":
+        for i in members:
+            profile_user=Profile.objects.get(user=i)
+            profiles.append(profile_user)
+            try:
+                subscription = stripe.Subscription.create(
+                customer=profile_user.stripe_customer_id,
+                items=[{'plan': thread.plan_id}],
+                    )
+            except:
+                return HttpResponse(f"{User.objects.get(pk=i.pk).username} has no payment source attached")
+    else:
+        subscriptions=PaypalSubscription.objects.filter(thread=thread)
+        access_token=request.session.get("access_token")
+        for i in subscriptions:
+            try:
+                paypal.ResumeSubscription(i.subscription_id,access_token)
+            except:
+                return HttpResponse("Some error has occured while Starting")
+            
     context={'active':True}
     return render(request,'inbox.html',context)
     # return redirect(inbox(request,thread_id))
@@ -304,3 +315,6 @@ def CardInput(request):
             return HttpResponse(f"{user.username} has incomplete data")
         return redirect("home")
     return render(request,"cardinput.html")
+def paypalhook(request):
+    # return HttpResponse(status=200)
+    print(request.POST)
