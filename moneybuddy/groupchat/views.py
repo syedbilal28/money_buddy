@@ -69,7 +69,7 @@ def home(request):
 def Signup(request):
     if request.method=="POST":
         signupform = SignupForm(request.POST)
-        profileform=ProfileForm(request.POST)
+        profileform=ProfileForm(request.POST,request.FILES)
         print(profileform)
         if signupform.is_valid() and profileform.is_valid():
             user=signupform.save()
@@ -112,8 +112,9 @@ def CreatePaypalSubscription(request):
     paypal.PauseSubscription(subscription_id,access_token)
     thread.participants.add(profile)
     thread.save()
+    return JsonResponse({"active":True})
 def inbox(request,thread_id):
-    thread_=Thread.objects.get(pk=int(thread_id))
+    thread_=Thread.objects.get(pk=eval(thread_id))
     messages=ChatMessage.objects.filter(thread=thread_)
     try:
         profile=Profile.objects.get(user=request.user)
@@ -218,6 +219,8 @@ def Start(request,thread_id):
     thread.status="A"
     thread.save()
     members=thread.participants.all()
+    if len(members) <4:
+        return render(request,"inbox.html",{"alert":True,"message":"Cannot start until 4 members Join"})
     profiles=[]
     print(members)
     if thread.payment_method =="stripe":

@@ -148,7 +148,7 @@
                         </div>
                     {% endif %}
                     <h2>Signup</h2>
-                    <form method="post" action="{% url 'signup' %}" id="form">
+                    <form method="post" action="{% url 'signup' %}" id="form" enctype="multipart/form-data">
                         {% csrf_token %}
                     {{ signupform.as_p }}    
                     {{ profileform.as_p }}

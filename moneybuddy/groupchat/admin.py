@@ -1,8 +1,8 @@
 from django.contrib import admin
-from .models import ChatMessage,Thread,ThreadManager,Profile
+from .models import ChatMessage,Thread,ThreadManager,Profile,PaypalSubscription
 # Register your models here.
 admin.site.register(Profile)
-
+admin.site.register(PaypalSubscription)
 class ChatMessage(admin.TabularInline):
     model = ChatMessage
 
