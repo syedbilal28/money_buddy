@@ -70,6 +70,13 @@ class PaypalSubscription(models.Model):
     user=models.ForeignKey(Profile,on_delete=models.CASCADE)
     thread=models.ForeignKey('Thread',on_delete=models.CASCADE)
     subscription_id=models.CharField(max_length=5000)
+
+class PaypalPayout(models.Model):
+    receiver=models.ForeignKey(User,on_delete=models.CASCADE)
+    plan_id=models.CharField(max_length=200)
+    amount=models.IntegerField()
+    datetime=models.DateTimeField(auto_now_add=True)
+
 class Thread(models.Model):
     
     admin= models.ForeignKey(Profile,on_delete=models.CASCADE,related_name="Admin")
