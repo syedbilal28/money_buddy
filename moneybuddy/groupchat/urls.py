@@ -13,5 +13,6 @@ urlpatterns=[
     path("hooks/",views.my_webhook_view,name="Hook"),
     path("card/",views.CardInput,name="CardInput"),
     path("plan/",views.GetPlanId,name="Plan"),
-    path("PaypalSubscribe/",views.CreatePaypalSubscription,name="CreateSubscription")
+    path("PaypalSubscribe/",views.CreatePaypalSubscription,name="CreateSubscription"),
+    path("Paypalhook/",views.paypalhook,name="paypalHook")
 ]

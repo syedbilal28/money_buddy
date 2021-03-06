@@ -74,8 +74,12 @@ def CreatePlan(access_token,product_id,thread_price):
                        }}
     data=json.dumps(data)
     response = requests.post(url,headers=headers,data=data)
-    response=response.json()
-    return response['id']
+    print(response.json())
+    if(response.status_code == 201):
+      response=response.json()
+      return response['id']
+    else:
+      return "Could not be created"
 def PauseSubscription(subscription_id,access_token):
     url=f"https://api-m.sandbox.paypal.com/v1/billing/subscriptions/{subscription_id}/suspend"
     headers={
@@ -139,3 +143,37 @@ def CreateSubscription():
         "cancel_url": "https://example.com/cancelUrl"
       }
     }
+
+def SendPayout(email_receiver,amount,payout_id,access_token):
+  url="https://api-m.sandbox.paypal.com/v1/payments/payouts"
+  headers={
+    "Content-Type":"application/json",
+    "Authoization":f"Bearer {access_token}"
+  }
+  data={
+    "sender_batch_header":{
+      "sender_batch_id":f"{payout_id}",
+      "email_subject": "You have a payout!",
+      "email_message": "You have received a payout! Thanks for using our service!"
+    },
+    "items":[
+      {
+        "recipient_type": "EMAIL",
+      "amount": {
+        "value": f"{amount}",
+        "currency": "USD"
+      },
+      "note": "Thanks for your patronage!",
+      "sender_item_id": f"{payout_id}",
+      "receiver": f"{email_receiver}"
+      }
+    ]
+  }
+  data=json.dumps(data)
+  try:
+    response=requests.post(url,headers=headers,data=data)
+  except:
+    access_token=GenerateToken()
+    response=requests.post(url,headers=headers,data=data)
+  response=response.json()
+  return response
