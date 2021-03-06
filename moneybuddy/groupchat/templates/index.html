@@ -7,6 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans&family=RocknRoll+One&family=Shippori+Mincho:wght@500&display=swap" rel="stylesheet">
     <title>Login</title>
     <style>
         body{
@@ -15,11 +18,13 @@
             font-family: 'Open Sans', sans-serif;
             overflow-x: hidden;
             width: 100vw;
+            scroll-behavior: smooth; 
         }
         .container{
             margin: 0px; 
             padding: 0px;
             width:100vw;
+            scroll-behavior: smooth; 
             
             
         }
@@ -82,7 +87,7 @@ background-position:center;
             right:12%;
             top:20%;
             padding:2rem 1rem;
-            min-height:50%;
+            /* min-height:50%; */
             width:35%;
             /* min-width: 400px; */
             /* max-width: 50%; */
@@ -132,19 +137,25 @@ background-position:center;
             font-size: 6vmin;
             color: #f2f2f2;
         }
-        #bottom1{
+        #bottom
+        {
+            padding: 50px;
             position: relative;
             width:100vw;
             min-height:50vh;
-            background-color:rgba(210, 100, 80,0.2);
+            background-color:#242424;
+
             margin:0px;
+            color: #D26450;
+            /* background-image: linear-gradient(to right,#D26450 ,#F79C4D); */
+            
            
         }
         #bottom1_img{
             /* position: absolute; */
 
-            width: 55vw;
-            max-height: 90vh;
+            min-width: 200px;
+            max-height: 250px;
             background-repeat:no-repeat;
             -webkit-background-size:cover;
             -moz-background-size:cover;
@@ -164,7 +175,7 @@ background-position:center;
             text-align: center;
         }
         #text{
-            font-size: 3vmin;
+            font-size: 16px;
         }
         @media only screen and (max-width: 768px) {
             #form_container {
@@ -183,10 +194,17 @@ background-position:center;
             #left,#right{
                 width: 100vw;
             }
-            #bottom1_img{
-                width: 100vw;
+            #bottom{
+                padding: 20px 10px;
             }
-
+            /* #bottom1_img{
+                min-width: 100px;
+                max-width:150px ;
+            } */
+            #right{
+                padding: 0px;
+                margin:auto;
+            }
         }
         #invalid-wrapper{
             padding: 10px;
@@ -204,6 +222,13 @@ background-position:center;
         .alert{
             border-radius: 1rem;
         }
+        section{
+            scroll-behavior: smooth;
+        }
+        #left{
+            width: 100vw;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -215,12 +240,12 @@ background-position:center;
             <nav>
                 
                     <a href="{% url 'index' %}" id="logo">Logo</a>
-                    <a href="" id="work">How it Works</a>
+                    <a href="#bottom" id="work">How it Works</a>
                     <a href="{% url 'signup' %}" id="signup">Signup</a>
                 
             </nav>
             
-            <div id="form_container" class="shadow-lg p-3 mb-5">
+            <div id="form_container" class="shadow-lg p-3 ">
                 <form method="post" action="{% url 'index' %}" id="form">
                     {% if message %}
                         <div class="alert alert-danger" role="alert">
@@ -235,17 +260,21 @@ background-position:center;
             
             </div>
         </div>
-        <div id="bottom1" class="row">
-            <div class="col-sm" id="left">
-                <img id="bottom1_img" src="{% static 'landing_page1.jpeg' %}" alt="">
-            </div>
-            <div class="col-sm d-flex flex-row mb-3" id="right">
-                <div class="p-4 align-self-center" style="text-align: justify;">
-                    <h1 style="padding-top: 30px;">How it Works</h1>
-                    <p id="text" style="padding-top: 20px;"><span>Ayutogroup enables small groups of individuals to come together and save money for short term goals. Here's how it works: members (could be friends or strangers) get together online and decide to contribute a fixed amount of money into a savings pot each month. Every month one member of the group gets to take home the entire savings pot. This continues until everyone in the group has had a chance to take the pot.</span></p>
+        <section>
+            <div id="bottom" class="row" >
+                <div class="col-sm-4" id="left">
+                    <div id="image-wrapper">
+                        <img id="bottom1_img" class="rounded" src="{% static 'landing_page1.jpeg' %}" alt="" >
+                    </div>
+                </div>
+                <div class="col-8 mb-3" id="right">
+                    <div  style="text-align: justify;">
+                        <h1 style="padding-top: 30px;font-family: 'Noto Sans', sans-serif;">How it Works</h1>
+                        <p id="text" style="padding-top: 20px;font-family: 'Shippori Mincho', serif;color:#fff5e6;"><span>Ayutogroup enables small groups of individuals to come together and save money for short term goals. Here's how it works: members (could be friends or strangers) get together online and decide to contribute a fixed amount of money into a savings pot each month. Every month one member of the group gets to take home the entire savings pot. This continues until everyone in the group has had a chance to take the pot.</span></p>
+                    </div>
                 </div>
             </div>
-        </div>
+        </section>
     </div>
     
 </body>
