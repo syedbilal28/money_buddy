@@ -283,7 +283,7 @@
                         
                         <div class="form-group">
                             <label>Monthly Charge</label>
-                            <input type="number" name="price" class="form-control" required>
+                            <input type="number" name="price" class="form-control" min="100" max="4000" id="savings" required>
                         </div>
                         <div class="form-group" id="privacy-div">
                             <label>Privacy</label>
@@ -319,7 +319,7 @@
                   </button>
                 </div>
                 <div class="modal-body">
-                  <form action="">
+                  <form action="" >
                       
                     <div class="form-group">
                         <label>Password</label>
@@ -379,7 +379,7 @@
                                 <i class="fab fa-cc-paypal" style="font-size: 50px;position: absolute;right: 80px;"></i>
                                 
                             {% else %}
-                            <i class="fab fa-cc-stripe" style="font-size: 50px;position: absolute;right: 80px;"></i>
+                                <i class="fab fa-cc-stripe" style="font-size: 50px;position: absolute;right: 80px;"></i>
                             {% endif %}
                             <h3> Looked up by {{ thread.admin }}</h3>                
                             <p id="buyout"><b>Monthly Savings:</b> <span class="byserver">{{ thread.monthly_charge }}</span></p>
@@ -410,11 +410,38 @@
       </script> -->
     <script>
         
+        function MakeThread(data){
+            console.log(data)
+            if (data.privacy == "P"){
+                privacy=1
+            }
+            else{
+                privacy=0
+            }
+            var thread= document.createElement("div")
+            thread.dataset.privacy=privacy
+            thread.dataset.info=data.id
+            thread.dataset.payment=data.payment_method
+            thread.id="thread"
+            thread.innerHTML=`<i class="fab fa-cc-${data.payment_method}" style="font-size: 50px;position: absolute;right: 80px;"></i>
+                                
+                                
+                                
+                                <h3> Looked up by ${data.admin.username}</h3>                
+                                <p id="buyout"><b>Monthly Savings:</b> <span class="byserver">${ data.monthly_charge }</span></p>
+                                <p id="participants"><b>Participants:</b> <span class="byserver">${ data.participants.length }</span></p>
+                                
+                                <button class="btn btn-secondary" id="join" onclick='go_to_thread(event)'>View</button>
+                                    `
+            document.querySelector("#threads").prepend(thread)
+        }
         function create_thread_paypal(event){
             $("#payment-method").val("paypal")
             // $("#thread-creation-form").submit()
             var form = document.querySelector("#thread-creation-form")
+            
             var price= form.children[0].children[1].value
+            if (price <= 4000 && price >=100){
             var privacy = form.children[1].children[1].value
             var password= form.children[2].children[1].value
             var payment_method="paypal"
@@ -430,17 +457,18 @@
                 },
                 success:function(e){
                     console.log(e,status)
-                    CallHome()
-                    
+                    // CallHome()
+                    MakeThread(e.thread)
                     }
             
             })
-            
+        }
         }
         function create_thread_stripe(event){
             $("#payment-method").val("stripe")
             var form = document.querySelector("#thread-creation-form")
             var price= form.children[0].children[1].value
+            if (price <= 4000 && price >=100){
             var privacy = form.children[1].children[1].value
             var password= form.children[2].children[1].value
             var payment_method="stripe"
@@ -484,7 +512,7 @@
                 
                 
             })
-            
+        }
         }
         function CallHome(){
             window.location.href="{% url 'home' %}"
@@ -516,12 +544,17 @@
                     },
                     dataType: 'json',
                     success: function (data) {
+                    $("#thread-password-modal").modal("hide")
                     console.log(data)
+
                         if(data.message == "No Card"){
                             window.location.href='/card/'
                         }
                         if(data.message == "Incorrect password"){
                             $("#errorModal").modal("show")
+                        }
+                        else if(data.message == "paypal success"){
+                            $("#paypalModal").modal("show")
                         }
                         else if( data.message == "Success" ){
                         window.location.href=`${thread_id}`
@@ -551,40 +584,43 @@
                 document.querySelector("#thread-password-modal").dataset.payment=thread_payment_method
                 $("#thread-password-modal").modal('show')
             }
-            if (thread_payment_method == "paypal"){
-                $.ajax({
-                    url:"{% url 'Plan' %}",
-                    type:"POST",
-                    data:{"thread_id":thread_id},
-                    dataType:"json",
-                    success:function(data){
-                        window.plan_id =data.plan_id
-                    }  
-                })
-                $("#paypalModal").modal("show")
-            }
             else{
-                $.ajax({
-                    url: "{% url 'Join' %}",
-                    type:"POST",
-                    data: {
-                    'thread_id':thread_id,
-                    "payment_method":thread_payment_method
-                    },
-                    dataType: 'json',
-                    success: function (data) {
-                    console.log(data)
+                if (thread_payment_method == "paypal"){
+                    $.ajax({
+                        url:"{% url 'Plan' %}",
+                        type:"POST",
+                        data:{"thread_id":thread_id},
+                        dataType:"json",
+                        success:function(data){
+                            window.plan_id =data.plan_id
+                            $("#paypalModal").modal("show")
+                        }  
+                    })
                     
-                    window.location.href=`${thread_id}`
-                    
-                    },
-                    error:function(e){
-                        window.location.href='/card/'
-                    }
-                    
-            });
-        }
-        }
+                }
+                else{
+                    $.ajax({
+                        url: "{% url 'Join' %}",
+                        type:"POST",
+                        data: {
+                        'thread_id':thread_id,
+                        "payment_method":thread_payment_method
+                        },
+                        dataType: 'json',
+                        success: function (data) {
+                        console.log(data)
+                        
+                        window.location.href=`${thread_id}`
+                        
+                        },
+                        error:function(e){
+                            window.location.href='/card/'
+                        }
+                        
+                });
+            }
+        
+        }}
         paypal.Buttons({
 
 createSubscription: function(data, actions) {

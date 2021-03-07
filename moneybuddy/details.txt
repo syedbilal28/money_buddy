@@ -1,161 +1,35 @@
 {
-  "api_version": "2020-08-27",
-  "created": 1608991214,
-  "data": {
-    "object": {
-      "account_country": "US",
-      "account_name": null,
-      "account_tax_ids": null,
-      "amount_due": 0,
-      "amount_paid": 0,
-      "amount_remaining": 0,
-      "application_fee_amount": null,
-      "attempt_count": 0,
-      "attempted": true,
-      "auto_advance": false,
-      "billing_reason": "subscription_create",
-      "charge": null,
-      "collection_method": "charge_automatically",
-      "created": 1608991214,
-      "currency": "usd",
-      "custom_fields": null,
-      "customer": "cus_IdlJHoKOiS0WRa",
-      "customer_address": null,
-      "customer_email": "user1@gmail.com",
-      "customer_name": "user1",
-      "customer_phone": null,
-      "customer_shipping": null,
-      "customer_tax_exempt": "none",
-      "customer_tax_ids": [],
-      "default_payment_method": null,
-      "default_source": null,
-      "default_tax_rates": [],
-      "description": null,
-      "discount": null,
-      "discounts": [],
-      "due_date": null,
-      "ending_balance": -80000,
-      "footer": null,
-      "hosted_invoice_url": "https://invoice.stripe.com/i/acct_1HpXfpJEfpDOgYo1/invst_Idv9uMqD1wRwa1d5PS60kWgEdoHGrOD",
-      "id": "in_1I2dJaJEfpDOgYo18Nzwu3VW",
-      "invoice_pdf": "https://pay.stripe.com/invoice/acct_1HpXfpJEfpDOgYo1/invst_Idv9uMqD1wRwa1d5PS60kWgEdoHGrOD/pdf",
-      "last_finalization_error": null,
-      "lines": {
-        "data": [
+  'transactions': 
+  [{
+    'status': 'COMPLETED', 
+    'id': '31806837LL2127837', 
+    'amount_with_breakdown': 
+    {
+      'gross_amount': {
+        'currency_code': 'USD', 
+        'value': '20.20'
+        }, 
+        'fee_amount': {
+          'currency_code': 'USD', 
+          'value': '0.89'
+          }, 
+          'net_amount': 
           {
-            "amount": 2000,
-            "currency": "usd",
-            "description": "1 \u00d7 user3 (at $20.00 / month)",
-            "discount_amounts": [],
-            "discountable": true,
-            "discounts": [],
-            "id": "il_1I2dJaJEfpDOgYo1BpVn8CBI",
-            "livemode": false,
-            "metadata": {},
-            "object": "line_item",
-            "period": {
-              "end": 1611669614,
-              "start": 1608991214
-            },
-            "plan": {
-              "active": true,
-              "aggregate_usage": null,
-              "amount": 2000,
-              "amount_decimal": "2000",
-              "billing_scheme": "per_unit",
-              "created": 1608990324,
-              "currency": "usd",
-              "id": "plan_IduvTrbk7t03M5",
-              "interval": "month",
-              "interval_count": 1,
-              "livemode": false,
-              "metadata": {},
-              "nickname": "Initial Plan",
-              "object": "plan",
-              "product": "prod_IduvxbHZtSznre",
-              "tiers_mode": null,
-              "transform_usage": null,
-              "trial_period_days": null,
-              "usage_type": "licensed"
-            },
-            "price": {
-              "active": true,
-              "billing_scheme": "per_unit",
-              "created": 1608990324,
-              "currency": "usd",
-              "id": "plan_IduvTrbk7t03M5",
-              "livemode": false,
-              "lookup_key": null,
-              "metadata": {},
-              "nickname": "Initial Plan",
-              "object": "price",
-              "product": "prod_IduvxbHZtSznre",
-              "recurring": {
-                "aggregate_usage": null,
-                "interval": "month",
-                "interval_count": 1,
-                "trial_period_days": null,
-                "usage_type": "licensed"
-              },
-              "tiers_mode": null,
-              "transform_quantity": null,
-              "type": "recurring",
-              "unit_amount": 2000,
-              "unit_amount_decimal": "2000"
-            },
-            "proration": false,
-            "quantity": 1,
-            "subscription": "sub_Idv9gM0ZZiK4yR",
-            "subscription_item": "si_Idv9Bji8UahGza",
-            "tax_amounts": [],
-            "tax_rates": [],
-            "type": "subscription"
-          }
-        ],
-        "has_more": false,
-        "object": "list",
-        "total_count": 1,
-        "url": "/v1/invoices/in_1I2dJaJEfpDOgYo18Nzwu3VW/lines"
-      },
-      "livemode": false,
-      "metadata": {},
-      "next_payment_attempt": null,
-      "number": "E2FCD0B7-0010",
-      "object": "invoice",
-      "paid": true,
-      "payment_intent": null,
-      "period_end": 1608991214,
-      "period_start": 1608991214,
-      "post_payment_credit_notes_amount": 0,
-      "pre_payment_credit_notes_amount": 0,
-      "receipt_number": null,
-      "starting_balance": -82000,
-      "statement_descriptor": null,
-      "status": "paid",
-      "status_transitions": {
-        "finalized_at": 1608991214,
-        "marked_uncollectible_at": null,
-        "paid_at": 1608991214,
-        "voided_at": null
-      },
-      "subscription": "sub_Idv9gM0ZZiK4yR",
-      "subtotal": 2000,
-      "tax": null,
-      "total": 2000,
-      "total_discount_amounts": [],
-      "total_tax_amounts": [],
-      "transfer_data": null,
-      "webhooks_delivered_at": null
-    }
-  },
-  "id": "evt_1I2dJbJEfpDOgYo1qRcHNmyG",
-  "livemode": false,
-  "object": "event",
-  "pending_webhooks": 1,
-  "request": {
-    "id": "req_e3hyjmRKFNHoPr",
-    "idempotency_key": "4cb12c7a-bfc9-4a10-bf41-b3985d5d03d9"
-  },
-  "type": "invoice.paid"
-}
-Unhandled event type invoice.paid
+            'currency_code': 'USD', 
+            'value': '19.31'
+            }}, 
+            'payer_name': 
+            {
+              'given_name': 'Abdulkadir', 
+              'surname': 'Ali omar'
+              }, 
+              'payer_email': 'user2005@gmail.com', 
+              'time': '2021-03-02T11:15:13.000Z'
+              }], 
+              'links': 
+              [{
+                'href': 'https://api-m.sandbox.paypal.com/v1/billing/subscriptions/I-RDX0U3YVHF24/transactions?start_time=2018-01-21T07%3A50%3A20.940Z&end_time=2022-08-21T07%3A50%3A20.940Z', 
+                'rel': 'SELF', 
+                'method': 'GET'
+                }]}
+'https://api-m.sandbox.paypal.com/v1/billing/subscriptions/I-RDX0U3YVHF24/transactions?start_time=2018-01-21T07%3A50%3A20.940Z&end_time=2022-08-21T07%3A50%3A20.940Z', 'rel': 'SELF', 'method': 'GET'}]}

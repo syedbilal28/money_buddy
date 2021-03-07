@@ -1,0 +1,164 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans&family=RocknRoll+One&family=Shippori+Mincho:wght@500&display=swap" rel="stylesheet">
+    
+    <title>Document</title>
+    <style>
+        body{
+           margin: 0px; 
+            padding: 0px;
+            font-family: 'Open Sans', sans-serif;
+            overflow-x: hidden;
+            width: 100vw;
+            scroll-behavior: smooth; 
+        }
+        .container{
+            margin: 0px; 
+            padding: 0px;
+            min-width:100vw;
+            scroll-behavior: smooth; 
+            background-color: #D26450;
+            
+        }
+        #logo_img{
+            width: 50px;
+            height: 50px;
+        }
+        nav{
+            /* position: absolute; */
+            height:20%;
+            width:100%;
+            padding-top: 1rem;
+            background-color:#D26450 ;
+            
+        }
+        nav a{
+            text-decoration: none;
+            /* font-size: 2vmin; */
+            font-size: 2.5vmin;
+            color:white;
+            font-weight: 500;
+        }
+        nav a:hover{
+            text-decoration: none;
+            color:black;
+        }
+        #signup{
+            padding:0.75rem 1rem;
+            /* margin-top: 1rem; */
+            margin-right: 2rem;
+            background-color: white;
+            color: #D26450;
+            float: right;
+            border-radius: 5rem;
+        }
+        #signup:hover{
+            background-color: #D26450;
+            color:white;
+            transition: 0.3s;
+        }
+        #logo{
+            padding:0px 1rem;
+            width:5rem;
+            height: 5rem;
+            margin-right: 4rem;
+        }
+        #bottom
+        {
+            padding: 50px;
+            position: relative;
+            /* width:100vw; */
+            /* min-height:50vh; */
+            min-height: 75vh;
+            background-color:rgba(255,255,255,0.9);
+
+            margin:0px;
+            color: #D26450;
+            /* background-image: linear-gradient(to right,#D26450 ,#F79C4D); */
+            
+           
+        }
+        #bottom1_img{
+            /* position: absolute; */
+
+            min-width: 200px;
+            max-height: 250px;
+            background-repeat:no-repeat;
+            -webkit-background-size:cover;
+            -moz-background-size:cover;
+            -o-background-size:cover;
+            background-size:cover;
+            background-position:center;
+        }
+        #left{
+            /* position: absolute; */
+            /* width: 55vw; */
+            padding: 0px;
+        }
+        #right{
+            /* position: absolute; */
+            float: right;
+            width:40vw;
+            text-align: center;
+        }
+        #text{
+            font-size: 16px;
+        }
+        @media only screen and (max-width: 768px) {
+            #bottom{
+                text-align: center;
+                padding: 10px;
+            }
+            #right{
+                width: 100%;
+            }
+            #content-holder{
+                text-align: center;
+            }
+            #bottom1_img{
+                max-height:175px
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="p-2">
+                
+        <a href="{% url 'index' %}" id="logo"><img id="logo_img" src="{% static 'logo.png' %}" alt=""></a>
+        <!-- <a href="#bottom" id="work">How it Works</a> -->
+        <a href="{% url 'signup' %}" id="signup">Signup</a>
+    
+    </nav>
+    <div class="container">
+        <div class="d-flex justify-content-center align-items-center">
+            <div id="content-holder" class="m-5 shadow">
+                <section>
+                    <div id="bottom" class="row rounded shadow d-flex align-items-center justify-content-center" >
+                        <div class="col-sm-5" id="left">
+                            <div id="image-wrapper">
+                                <img id="bottom1_img" class="rounded" src="{% static 'landing_page1.jpeg' %}" alt="" >
+                            </div>
+                        </div>
+                        <div class="col-sm-7 mb-3" id="right">
+                            <div  style="text-align: justify;">
+                                <h1 style="padding-top: 30px;font-family: 'Noto Sans', sans-serif;text-align: left;">How it Works</h1>
+                                <p id="text" style="color:black;padding-top: 20px;font-family: 'Shippori Mincho', serif;"><span>Ayutogroup enables small groups of individuals to come together and save money for short term goals. Here's how it works: members (could be friends or strangers) get together online and decide to contribute a fixed amount of money into a savings pot each month. Every month one member of the group gets to take home the entire savings pot. This continues until everyone in the group has had a chance to take the pot.</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>  
+
+        </div>
+    </div>
+</body>
+</html>

@@ -21,6 +21,11 @@ def CreateProduct(access_token,hashed_request_id,user,thread_price):
     response = requests.post('https://api-m.sandbox.paypal.com/v1/catalogs/products',headers=headers,data=data)
     if response.status_code != 200 or response.status_code !=201:
         access_token=GenerateToken()
+        headers = {
+                'Content-Type': 'application/json',
+                'Authorization': f'Bearer {access_token}',
+                'PayPal-Request-Id': hashed_request_id,
+            }
         response = requests.post('https://api-m.sandbox.paypal.com/v1/catalogs/products',headers=headers,data=data)
         
 
@@ -79,6 +84,16 @@ def CreatePlan(access_token,product_id,thread_price):
       response=response.json()
       return response['id']
     else:
+      access_token=GenerateToken()
+      headers={
+                "Accept":"application/json",
+                'Authorization': f'Bearer {access_token}',
+                'Content-Type': 'application/json',
+                "Prefer":"return=representation"
+            }
+      response = requests.post(url,headers=headers,data=data)
+      response=response.json()
+      return response['id']
       return "Could not be created"
 def PauseSubscription(subscription_id,access_token):
     url=f"https://api-m.sandbox.paypal.com/v1/billing/subscriptions/{subscription_id}/suspend"
@@ -164,7 +179,7 @@ def SendPayout(email_receiver,amount,payout_id,access_token):
         "currency": "USD"
       },
       "note": "Thanks for your patronage!",
-      "sender_item_id": f"{payout_id}",
+      "sender_item_id": f"{payout_id+1}",
       "receiver": f"{email_receiver}"
       }
     ]
@@ -175,5 +190,24 @@ def SendPayout(email_receiver,amount,payout_id,access_token):
   except:
     access_token=GenerateToken()
     response=requests.post(url,headers=headers,data=data)
+  response=response.json()
+  return response
+
+def ListTransactions(subscription_id,access_token):
+  url=f"https://api-m.sandbox.paypal.com/v1/billing/subscriptions/{subscription_id}/transactions?start_time=2018-01-21T07:50:20.940Z&end_time=2022-08-21T07:50:20.940Z"
+  headers={
+    "Content-Type":"application/json",  
+    "Authorization":f"Bearer {access_token}"
+  }
+  
+  response=requests.get(url,headers=headers)
+  response=response.json()  
+  if response['error']:
+    access_token=GenerateToken()
+    headers={
+    "Content-Type":"application/json",
+    "Authorization":f"Bearer {access_token}"
+  }
+    response=requests.get(url,headers=headers)
   response=response.json()
   return response

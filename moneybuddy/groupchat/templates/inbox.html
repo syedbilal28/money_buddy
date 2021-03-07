@@ -367,6 +367,18 @@
     </div>
     
 <script>
+    $("#chat_message").focus(function(){
+       
+        document.querySelector("textarea").addEventListener("keyup", function(event) {
+        // Number 13 is the "Enter" key on the keyboard
+            if (event.keyCode === 13) {
+                // Cancel the default action, if needed
+                event.preventDefault();
+                // Trigger the button element with a click
+                $("#form").submit();
+            }
+        });
+    });
     $(window).on('resize', function() {
         var win = $(this);
         if (win.width() < 768) {
