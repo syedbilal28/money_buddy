@@ -10,6 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link rel="preconnect" href="https://fonts.gstatic.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&family=RocknRoll+One&family=Shippori+Mincho:wght@500&display=swap" rel="stylesheet">
+
     <title>Login</title>
     <style>
         body{
@@ -87,7 +88,7 @@ background-position:center;
             right:12%;
             top:20%;
             padding:2rem 1rem;
-            /* min-height:50%; */
+
             width:35%;
             /* min-width: 400px; */
             /* max-width: 50%; */
@@ -154,7 +155,9 @@ background-position:center;
         #bottom1_img{
             /* position: absolute; */
 
-            min-width: 200px;
+
+            min-width:200px;
+
             max-height: 250px;
             background-repeat:no-repeat;
             -webkit-background-size:cover;
@@ -178,7 +181,7 @@ background-position:center;
             font-size: 16px;
         }
         @media only screen and (max-width: 768px) {
-            #form_container {
+             #form_container {
                 width:80%;
                 min-width: 80%;
             }
@@ -222,17 +225,22 @@ background-position:center;
         .alert{
             border-radius: 1rem;
         }
-        section{
+
+	section{
+
             scroll-behavior: smooth;
         }
         #left{
             width: 100vw;
             text-align: center;
         }
-        #logo_img{
+	#logo_img{
             width: 50px;
             height: 50px;
         }
+	#top{
+	height:100vh;
+	}
     </style>
 </head>
 <body>
@@ -243,7 +251,8 @@ background-position:center;
             <!-- <img src="{% static 'homepage.jpeg' %}" alt=""> -->
             <nav>
                 
-                    <a href="{% url 'index' %}" id="logo"><img id="logo_img" src="{% static 'logo.png' %}" alt=""></a>
+                   <a href="{% url 'index' %}" id="logo"><img id="logo_img" src="{% static 'logo.png' %}" alt=""></a>
+                    
                     <a href="/how-it-works/" id="work">How it Works</a>
                     <a href="{% url 'signup' %}" id="signup">Signup</a>
                 
@@ -264,21 +273,8 @@ background-position:center;
             
             </div>
         </div>
-        <section>
-            <div id="bottom" class="row" >
-                <div class="col-sm-4" id="left">
-                    <div id="image-wrapper">
-                        <img id="bottom1_img" class="rounded" src="{% static 'landing_page1.jpeg' %}" alt="" >
-                    </div>
-                </div>
-                <div class="col-8 mb-3" id="right">
-                    <div  style="text-align: justify;">
-                        <h1 style="padding-top: 30px;font-family: 'Noto Sans', sans-serif;">How it Works</h1>
-                        <p id="text" style="padding-top: 20px;font-family: 'Shippori Mincho', serif;color:#fff5e6;"><span>Ayutogroup enables small groups of individuals to come together and save money for short term goals. Here's how it works: members (could be friends or strangers) get together online and decide to contribute a fixed amount of money into a savings pot each month. Every month one member of the group gets to take home the entire savings pot. This continues until everyone in the group has had a chance to take the pot.</span></p>
-                    </div>
-                </div>
-            </div>
-        </section>
+
+      
     </div>
     
 </body>

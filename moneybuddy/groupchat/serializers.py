@@ -1,6 +1,6 @@
 
 from rest_framework import serializers
-from .models import Thread,User,Profile
+from .models import User,Thread,Profile
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model=User

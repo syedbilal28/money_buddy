@@ -142,11 +142,11 @@
                     
                 </div>
                 <div class="col-sm" id="right">
-                    {% if message %}
+                    
                         <div class="alert alert-info">
-                            <p>We do not operate in your country</p>
+                            <p>Please use the same email address as your paypal account because we give payouts based on email on this form.</p>
                         </div>
-                    {% endif %}
+                    
                     <h2>Signup</h2>
                     <form method="post" action="{% url 'signup' %}" id="form" enctype="multipart/form-data">
                         {% csrf_token %}

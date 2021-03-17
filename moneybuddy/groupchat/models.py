@@ -65,7 +65,10 @@ class ThreadManager(models.Manager):
                 obj.save()
                 return obj, True
             return None, False
-    
+class PaypalSubscriptionPayment(models.Model):
+    payer=models.ForeignKey(User,on_delete=models.SET_NULL,null=True)
+    thread=models.ForeignKey("Thread",on_delete=models.SET_NULL,null=True)
+    amount=models.FloatField(default=0)
 class PaypalSubscription(models.Model):
     user=models.ForeignKey(Profile,on_delete=models.CASCADE)
     thread=models.ForeignKey('Thread',on_delete=models.CASCADE)
@@ -73,8 +76,8 @@ class PaypalSubscription(models.Model):
 
 class PaypalPayout(models.Model):
     receiver=models.ForeignKey(User,on_delete=models.CASCADE)
-    plan_id=models.CharField(max_length=200)
-    amount=models.IntegerField()
+    plan_id=models.CharField(max_length=200,null=True)
+    amount=models.FloatField()
     datetime=models.DateTimeField(auto_now_add=True)
 
 class Thread(models.Model):

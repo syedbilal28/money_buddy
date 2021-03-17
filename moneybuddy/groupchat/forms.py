@@ -55,7 +55,7 @@ class SignupForm(forms.ModelForm):
            
         return user
 class ThreadCreationForm(forms.ModelForm):
-    monthly_charge=forms.IntegerField(label='Buy out',label_suffix='',widget=forms.TextInput(attrs={"id":"price_input","min":"100","max":"4000"}))
+    monthly_charge=forms.IntegerField(label='Buy out',label_suffix='',widget=forms.TextInput(attrs={"id":"price_input"}))
     class Meta:
         model=Thread
         fields=[

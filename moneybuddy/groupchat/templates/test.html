@@ -1,88 +1,96 @@
-<script>
-     function create_thread_paypal(event){
-            $("#payment-method").val("paypal")
-            // $("#thread-creation-form").submit()
-            var form = document.querySelector("#thread-creation-form")
-            var price= form.children[0].children[1].value
-            if (price <= 4000 && price >=100){
-            var privacy = form.children[1].children[1].value
-            var password= form.children[2].children[1].value
-            var payment_method="paypal"
-            $.ajax({
-                url:"{% url 'create-thread' %}",
-                method:"POST",
-                data:{
-                    "csrfmiddlewaretoken":"{{ csrf_token }}",
-                    "price": price,
-                    "privacy":privacy,
-                    "password":password,
-                    "payment_method":payment_method,
-                },
-                success:function(e){
-                    console.log(e,status)
-                   // CallHome()
-                //window.location="/home/"
-                        setTimeout(function() {
-  //your code to be executed after 1 second
-}, 3000);
-                        MakeThread(e.thread)
-                        $('#createModal').modal('hide');
-                        //location.reload()
-                    return false;
-                    }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <title>Document</title>
+</head>
+<style>
+    .container{
+        /* border: 1px solid black; */
+        height: 100vh;
+        margin: 0px;
+        padding: 0px;
+        width: 100vw;
+    }
+    nav{
+        border: 1px solid black;
+        min-height: 40px;
+    }
+    #ChatHolder{
+        width: 75vw;
+        float: left;
+        border: 1px solid black;
+    }
+    #ads{
+        width: 25vw;
+        float: right;
+        border: 1px solid black;
+    }
+    #chat-header{
+        min-height: 60px;
+        border: 1px solid green;
+    }
+    .header{
+        display: inline-block;
+    }
+    .right{
+        float: right;
+    }
+</style>
+<body>
+    <nav>
+            
+                
+        <a href="{% url 'index' %}" id="logo">Logo</a>
+        <!-- <a href="" id="work">How it Works</a> -->
+        <a href="{% url 'Logout' %}" id="Logout">Logout</a>
+    
+    
+</nav>
+    <div class="container">
+        
+        <div id="ads">
+            <div class="row">
+                For ads
+            </div>
+            <div class="row">
+                For ads
+            </div>
+        </div>
+        <div id="ChatHolder">
+            <div id="chat-header">
+                
 
-            })
-           //CallHome()
-}}
-function create_thread_stripe(event){
-            $("#payment-method").val("stripe")
-            var form = document.querySelector("#thread-creation-form")
-            var price= form.children[0].children[1].value
-            if (price <= 4000 && price >=100){
-            var privacy = form.children[1].children[1].value
-            var password= form.children[2].children[1].value
-            var payment_method="stripe"
-            $.ajax({
-                url:"{% url 'create-thread' %}",
-                method:"POST",
-                data:{
-                    "csrfmiddlewaretoken":"{{ csrf_token }}",
-                    "price": price,
-                    "privacy":privacy,
-                    "password":password,
-                    "payment_method":payment_method,
-                },
-                success:function(e){
-                    console.log(e,status)
-                    // alert(e.message)
-
-                    if ( e.message.substring(0,5) == "Our o" ){
-                        alert(e.message)
-
-                        CallHome()
-                            return false
-                        // document.querySelector("#message-modal").innerText=e.message
-                        // $('#exampleModalCenter').modal('show');
-                    }
-                    else if (e.message == "CardInput"){
-                        window.location.href="{% url 'CardInput' %}"
-                            return false
-                    }
-                    else{
-
-                        CallHome()
-                            return false
-                    }
-
-                    window.location="{% url 'home' %}"
-                },
-                error:function(data){
-                    document.querySelector("#message-modal").innerText=data.message
-                    $('exampleModalCenter').modal('show');
-                    CallHome()
-
-                }
-            });
-            }}
-
-</script>
+                        <h3 class="header">Created By: Bilal</h3>
+                        <h4 class="header">Monthly Charge: 200</h4>
+                        <p class="header right" id="participants"> Participants: 5</p>
+                        <!-- <button id="add" class="btn btn-primary header">Add People</button> -->
+                        
+                        <button id="start" onclick="Start()" class="btn btn-primary header right">Start</button>
+                        
+                    
+            </div>
+            <div id="Chatbox">
+                
+                <div class="chat-message">
+                    <p class="sender">bilal</p><span class="time">12pm</span><br>
+                    <p class="message">Hello</p>
+                    
+                </div>
+                
+            </div>
+            <div id="form_holder">
+                <form id="form">
+                    <textarea type="text" placeholder="Type a text message" id="chat_message"></textarea>
+                    <input type="hidden" id="myusername" value="{{ user.username }}">
+                    <button type="submit" class="btn btn-primary" >Send</button>
+                </form>
+            </div>
+        </div>
+    </div> 
+    
+</body>
+</html>

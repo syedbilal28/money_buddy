@@ -50,7 +50,7 @@ def CreatePlan(access_token,product_id,thread_price):
             {
               "frequency":
                {
-                 "interval_unit": "MONTH",
+                 "interval_unit": "DAY",
                  "interval_count": 1
                  },
                  "tenure_type": "REGULAR",
@@ -94,7 +94,7 @@ def CreatePlan(access_token,product_id,thread_price):
       response = requests.post(url,headers=headers,data=data)
       response=response.json()
       return response['id']
-      return "Could not be created"
+      #return "Could not be created"
 def PauseSubscription(subscription_id,access_token):
     url=f"https://api-m.sandbox.paypal.com/v1/billing/subscriptions/{subscription_id}/suspend"
     headers={
@@ -160,54 +160,71 @@ def CreateSubscription():
     }
 
 def SendPayout(email_receiver,amount,payout_id,access_token):
-  url="https://api-m.sandbox.paypal.com/v1/payments/payouts"
-  headers={
+    url="https://api-m.sandbox.paypal.com/v1/payments/payouts"
+    headers={
     "Content-Type":"application/json",
-    "Authoization":f"Bearer {access_token}"
-  }
-  data={
+    "Authorization":f"Bearer {access_token}"
+    }
+    data={
     "sender_batch_header":{
       "sender_batch_id":f"{payout_id}",
       "email_subject": "You have a payout!",
       "email_message": "You have received a payout! Thanks for using our service!"
-    },
+        },
     "items":[
-      {
+        {
         "recipient_type": "EMAIL",
       "amount": {
         "value": f"{amount}",
         "currency": "USD"
       },
       "note": "Thanks for your patronage!",
-      "sender_item_id": f"{payout_id+1}",
+      "sender_item_id": f"{payout_id + 1}",
       "receiver": f"{email_receiver}"
-      }
-    ]
-  }
-  data=json.dumps(data)
-  try:
+        }
+     ]
+    }
+    data=json.dumps(data)
+  
     response=requests.post(url,headers=headers,data=data)
-  except:
-    access_token=GenerateToken()
-    response=requests.post(url,headers=headers,data=data)
-  response=response.json()
-  return response
-
-def ListTransactions(subscription_id,access_token):
-  url=f"https://api-m.sandbox.paypal.com/v1/billing/subscriptions/{subscription_id}/transactions?start_time=2018-01-21T07:50:20.940Z&end_time=2022-08-21T07:50:20.940Z"
-  headers={
-    "Content-Type":"application/json",  
+    response=response.json()
+    try:
+        err=response['error']
+    except:
+        err=''
+    if err != '':
+        access_token=GenerateToken()
+        headers={
+    "Content-Type":"application/json",
     "Authorization":f"Bearer {access_token}"
   }
-  
-  response=requests.get(url,headers=headers)
-  response=response.json()  
-  if response['error']:
-    access_token=GenerateToken()
+        response=requests.post(url,headers=headers,data=data)
+        response=response.json()
+    infile=open("/var/www/money_buddy/moneybuddy/logs/text7.txt","w")
+    infile.write(str(response))
+    infile.close()
+
+    return response
+def ListTransactions(subscription_id,access_token):
+    url=f"https://api-m.sandbox.paypal.com/v1/billing/subscriptions/{subscription_id}/transactions?start_time=2018-01-21T07:50:20.940Z&end_time=2022-08-21T07:50:20.940Z"
     headers={
     "Content-Type":"application/json",
     "Authorization":f"Bearer {access_token}"
   }
+    #nfile=open('/var/www/money_buddy/moneybuddy/logs/text3.txt','w')
+  
+      
     response=requests.get(url,headers=headers)
-  response=response.json()
-  return response
+    response=response.json()
+    if response['error']:
+        access_token=GenerateToken()
+        headers={
+    "Content-Type":"application/json",
+    "Authorization":f"Bearer {access_token}"
+  }
+        response=requests.get(url,headers=headers)
+    response=response.json()
+    infile=open("/var/www/money_buddy/moneybuddy/logs/text4.txt","w")
+    infile.write(str(response))
+    infile.close()
+    return response

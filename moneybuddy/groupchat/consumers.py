@@ -10,8 +10,9 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 # from .serializer import ChatMessageSerializer
 
 class ChatConsumer(AsyncWebsocketConsumer):
-    async def websocket_connect(self,event):
-        print("connected",event)
+    async def connect(self):
+        
+        print("connected")
         self.channel_layer = channels.layers.get_channel_layer()
         print(self.scope['url_route']['kwargs'])
         self.thread_id = self.scope['url_route']['kwargs']['thread_id']

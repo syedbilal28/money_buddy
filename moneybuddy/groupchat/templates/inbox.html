@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/reconnecting-websocket/1.0.0/reconnecting-websocket.js" integrity="sha512-SxQulwFs2B38bmUJtBSo9tD07MDrtCbY8me3AOZ14tRknCPTeMDLvCQV4ekhs8R0o9QPnW5HQanKfveexVcwLA==" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -285,6 +286,11 @@
         }
         .col-{
             padding: 0px 10px;
+        
+	}
+	#logo_img{
+            width: 50px;
+            height: 50px;
         }
         /* .participant-name{
             font-size: 24px;
@@ -292,10 +298,35 @@
     </style>
 </head>
 <body>
+    <div class="modal fade" id="StartModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLongTitle">Group Order</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                {% for participant in thread.participants.all %}
+                <div class="form-group">
+                    <label>User</label>
+                    <input type="text" class="form-control" value={{ participant.username }}>
+                  </div>
+                  {% endfor %}
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+          </div>
+        </div>
+      </div>
     <nav>
             
                 
-        <a href="{% url 'index' %}" id="logo">Logo</a>
+        <a href="{% url 'index' %}" id="logo"><img id="logo_img" src="{% static 'logo.png' %}" alt=""></a>
+                    
         <!-- <a href="" id="work">How it Works</a> -->
         <a href="{% url 'Logout' %}" id="Logout">Logout</a>
     
@@ -367,8 +398,8 @@
     </div>
     
 <script>
-    $("#chat_message").focus(function(){
-       
+	$("#chat_message").focus(function(){
+
         document.querySelector("textarea").addEventListener("keyup", function(event) {
         // Number 13 is the "Enter" key on the keyboard
             if (event.keyCode === 13) {
@@ -392,14 +423,15 @@
         });
     function Start(){
         thread_id={{ thread.pk }}
+        $("#StartModal").modal("show")
         // window.location=`/Start/${thread_id}`
-        $.ajax({
-            url:`/Start/${thread_id}`,
-            method:"GET",
-            success:function(e){
-                console.log("Started")
-            }
-        })
+        // $.ajax({
+        //     url:`/Start/${thread_id}`,
+        //     method:"GET",
+        //     success:function(e){
+        //         console.log("Started")
+        //     }
+        // })
     }
     // For window.socket initiation
     var loc=window.location
@@ -410,7 +442,7 @@
     }
     // window.socket connection
     
-    var endpoint=  wsStart+loc.host+loc.pathname
+    var endpoint=  wsStart+loc.host+'/ws'+loc.pathname
     
     
     if(window.socket){

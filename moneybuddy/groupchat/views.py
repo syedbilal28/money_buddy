@@ -1,10 +1,9 @@
 from django.shortcuts import render,HttpResponse,redirect
 from .forms import LoginForm,SignupForm,ProfileForm
 from django.contrib.auth import login, logout,authenticate
-from .models import Thread,ChatMessage,Profile,PaypalSubscription,PaypalPayout
+from .models import Thread,ChatMessage,Profile,PaypalSubscription,PaypalPayout,PaypalSubscriptionPayment
 import stripe
 import json
-from .serializers import ThreadSerializerStart
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from django.dispatch import Signal
@@ -15,7 +14,9 @@ import paypalrestsdk
 from paypalrestsdk import BillingPlan
 from hashlib import sha256
 import requests
+from .serializers import ThreadSerializerStart
 import random
+from django.db.models import Count
 from . import paypal
 from .stripefuncs import CreateAccount,CreateCustomer,CreatePaymentMethod,CreatePlan
 paypalrestsdk.configure({
@@ -56,8 +57,9 @@ def index(request):
         return render(request,'index.html',{"form":form})
 @login_required
 def home(request):
-    threads=Thread.objects.all()
-
+    #threads=Thread.objects.all()
+    threads=(Thread.objects.annotate(num_participants=Count('participants'))
+                            .filter(num_participants__gt=0))
     try:
         profile=Profile.objects.get(user=request.user)
     except:
@@ -124,7 +126,7 @@ def inbox(request,thread_id):
         profile=Profile.objects.get(user=request.user)
     except:
         return redirect('home')
-    if profile==thread_.admin and thread_.status=='N' and len(thread.participants.all()) >3:
+    if profile==thread_.admin and thread_.status=='N' and len(thread_.participants.all()) >3:
         start_check=True
     else:
         start_check=False
@@ -145,13 +147,13 @@ def Create_Thread(request):
     thread_price=int(request.POST.get("price"))
     thread_privacy=request.POST.get("privacy")
     profile=Profile.objects.get(user=request.user)
-    thread_password=request.POST.get("password")
-    if thread_password != "" :
-        
+    
+    try:
+        thread_password=request.POST.get("password")
         print(thread_password)
         hashed_password=sha256(thread_password.encode('utf-8')).hexdigest()
         print(hashed_password)
-    else:
+    except:
         thread_privacy="N"
         hashed_password=None
     if payment_method =="stripe":
@@ -174,6 +176,7 @@ def Create_Thread(request):
         password=hashed_password,
         payment_method=payment_method
     )
+        thread_serialized=ThreadSerializerStart(thread_new).data
     else:
         print("PAYPALLL")
         req_id=request.user.username+str(random.randint(0,999999999))
@@ -192,9 +195,7 @@ def Create_Thread(request):
             privacy=thread_privacy,
             password=hashed_password
         )
-        
         thread_serialized=ThreadSerializerStart(thread_new).data
-
     return JsonResponse({"message":"Success","thread":thread_serialized},status=200)
 @csrf_exempt
 def Join_Thread(request):
@@ -229,6 +230,7 @@ def Join_Thread(request):
             
 
         return JsonResponse({"Thread":thread_id,"message":"Success"},safe=False)
+
 
 def Start(request,thread_id):
     thread=Thread.objects.get(pk=int(thread_id))
@@ -337,73 +339,80 @@ def CardInput(request):
 @csrf_exempt
 def paypalhook(request):
     # return HttpResponse(status=200)
-    # try:
-    # data=json.loads(request.)
-    data=request.POST.get("res")
-    data=json.loads(data)
-    subscription_id=data['resource']['billing_agreement_id']
-    amount=float(data['resource']['amount']['total']) -0.5
-    access_token=request.session.get("access_token")
-    subscription_data=paypal.ListTransactions(subscription_id,access_token)
-    # infile=open("/var/www/money_buddy/monebuddy/logs/text2.txt","w")
-    # infile.write(subscription_data)
-    # infile.close()
-    print(subscription_data)
-    payments=subscription_data['transactions']
-    user_email=subscription_data['transactions'][0]["payer_email"]
-    if len(payments)<=1:
-        payout_id=random.randint(0,99999)
-        paypal.SendPayout(user_email,amount,payout_id,access_token)
-        subscription_object=PaypalSubscription.objects.get(subscription_id=subscription_id)
-        
-        thread= subscription_object.thread
-        # thread.cycle+=1
-        # thread.save()
-        # infile=open("/var/www/money_buddy/monebuddy/logs/text3.txt","w")
-        # infile.write(f"{user_email} first payout {amount}")
-        # infile.close()
-    else:
-        subscription_object=PaypalSubscription.objects.get(subscription_id=subscription_id)
-        thread= subscription_id.thread
-        receiver=thread.to_receive
-        participants= thread.participants.all()
-        if receiver == None:
-            receiver=participants[0]
-        else:
-            count =0
-            for i in participants:
-                if i == receiver:
-                    receiver == participants[count+1]
+    #print(request.POST)
+    #infile=open("/var/www/money_buddy/moneybuddy/logs/text1.txt","w")
+    #infile.write(str(request.POST))
+    #infile.close()
+    #data=json.loads(request.body)
+    #infile=open("/var/www/money_buddy/moneybuddy/logs/text2.txt","w")
+    #infile.write("Herw we go again")
+    #infile.write(str(data))
+    #infile.close()
+    #PaypalPayment.objects.create(payment_id=data["id"],parent_payment_id=data['resource']['parent_payment'])
+    #return HttpResponse(status=200)
+    
+    infile=open("/var/www/money_buddy/moneybuddy/logs/text1.txt","a")
+    infile.write(str(request.body))
+    infile.close()
+    data=json.loads(request.body)
+    if data["event_type"]=="PAYMENT.SALE.COMPLETED":
+        subscription_id=data['resource']['billing_agreement_id']
+        amount=float(data['resource']['amount']['total']) -0.5
+        access_token=request.session.get("access_token")
+        subscription=PaypalSubscription.objects.get(subscription_id=subscription_id)
+        thread=subscription.thread
+        payer=subscription.user.user
+        payment= PaypalSubscriptionPayment.objects.create(payer=payer,thread=thread,amount=amount)
+        payments=PaypalSubscriptionPayment.objects.filter(thread=thread) 
 
-                    break
-                else:
-                    count+=1
-        payout_id=random.randint(0,99999)
-        paypal.SendPayout(receiver.email,amount,payout_id,access_token)
-        payout=PaypalPayout.objects.create(receiver=receiver,plan_id=thread.plan_id,amount=amount)
-        payouts=PaypalPayout.objects.filter(plan_id=thread.plan_id)
-        payouts_count= payouts.count()
-        if (payouts_count/len(participants))%1 == 0 :
-            
-            thread.cycle +=1
-            thread.to_receive=receiver
+        count=0
+        if (len(payments)/thread.participants.count())<=1:
+            payout_id=random.randint(0,99999)
+            infile=open("/var/www/money_buddy/moneybuddy/logs/text5.txt","w")
+            infile.write("In first stateme")
+            infile.close()
+            paypal.SendPayout(payer.email,amount,payout_id,access_token)
+            infile=open("/var/www/money_buddy/monebuddy/logs/text4.txt","w")
+            infile.write("Inside first subscription")
+            infile.close()
+            subscription_object=PaypalSubscription.objects.get(subscription_id=subscription_id)
+            thread= subscription_object.thread
+            #thread.cycle+=1
             thread.save()
+            
+        else:
+            # subscription_object=PaypalSubscription.objects.get(subscription_id=subscription_id)
+            # thread= subscription_object.thread
+            receiver=thread.to_receive
+            participants= thread.participants.all()
+            if receiver == None:
+                receiver=participants[0]
+            else:
+                
+                for i in participants:
+                    if i == receiver:
+                        receiver = participants[count]
 
-        # infile=open("/var/www/money_buddy/monebuddy/logs/text4.txt","w")
-        # infile.write(f"{receiver.email} iterative payout {amount}")
-        # infile.close()
+                        break
+                    else:
+                        count+=1
+            payout_id=random.randint(0,99999)
+            paypal.SendPayout(receiver.user.email,amount,payout_id,access_token)
+            payout=PaypalPayout.objects.create(receiver=receiver.user,plan_id=thread.plan_id,amount=amount)
+            payouts=PaypalPayout.objects.filter(plan_id=thread.plan_id)
+            payouts_count= payouts.count()
 
-        if thread.cycle == len(participants):
-            subscriptions=PaypalSubscription.objects.filter(thread=thread)
-            for i in subscriptions:
-                paypal.PauseSubscription(subscriptions.subscription_id,access_token) 
+            if (payouts_count/len(participants))%1 ==0:
+                thread.cycle +=1
+                thread.to_receive=participants[count+1]
+                thread.save()
+            # infile=open("/var/www/money_buddy/monebuddy/logs/text4.txt","w")
+            # infile.write(f"{receiver.email} iterative payout {amount}")
+            # infile.close()
+            if thread.cycle == len(participants)-1:
+                subscriptions=PaypalSubscription.objects.filter(thread=thread)
+                for i in subscriptions:
+                    paypal.PauseSubscription(subscriptions.subscription_id,access_token)
+            return HttpResponse(status=200)
         return HttpResponse(status=200)
-    # except:
-    #     return HttpResponse(status=200)
 
-
-
-
-    return HttpResponse(status=200)
-
- 
