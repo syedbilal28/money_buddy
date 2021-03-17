@@ -108,6 +108,7 @@ class Thread(models.Model):
     status=models.CharField(max_length=1,choices=Status_Choices,default="N")
     to_receive=models.OneToOneField(Profile,on_delete=models.CASCADE,blank=True,null=True)
     cycle=models.IntegerField(default=0)
+    order=models.CharField(max_length=500,null=True)
 
     objects = ThreadManager()
     class Meta:

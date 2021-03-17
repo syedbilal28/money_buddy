@@ -310,14 +310,16 @@
             <div class="modal-body">
                 {% for participant in thread.participants.all %}
                 <div class="form-group">
-                    <label>User</label>
-                    <input type="text" class="form-control" value={{ participant.username }}>
+                    <label>Receiver {{ forloop.counter }}</label>
+                    <select type="text" class="form-control user-start" value="{{ participant }}">
+                    
+                    </select>
                   </div>
                   {% endfor %}
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary">Save changes</button>
+              <button type="button" class="btn btn-primary" onclick="StartGroup(event)">Save changes</button>
             </div>
           </div>
         </div>
@@ -398,6 +400,56 @@
     </div>
     
 <script>
+    var options=''
+    {% for participant in thread.participants.all %}
+    var option =document.createElement("option")
+    options +="<option value='{{ participant }}'>{{ participant }}</option>"
+    // option.value="{{ participant }}"
+    // option.innerText="{{ participant }}"
+    // options.push(option)
+    {% endfor %}
+    var selects=$(".user-start")
+    for(var i=0; i< selects.length; i++){
+        // for(var j=0; j<options.length; j++){
+            selects[i].innerHTML=options
+            selects[i].options[i].setAttribute("selected",true)
+        // }
+    }
+    function StartGroup(e){
+        var selects=$(".user-start")
+        var selectdata=[]
+        for(var i=0; i<selects.length; i++){
+            for(var j=i+1; j<selects.length; j++){
+                if(selects[i].value == selects[j].value){
+                    alert("Not Unique")
+                    break;
+                }
+                
+            }
+            selectdata.push(selects[i].value)
+        }
+        $.ajax({
+            url:"{% url 'startcheck' %}",
+            method:"POST",
+            dataType:"json",
+            data:{
+                "UserOrder":JSON.stringify(selectdata),
+                "thread":"{{ thread.pk }}"
+            },
+            success:function(e){
+                thread_id="{{ thread.pk }}"
+                
+                $.ajax({
+                url:`/Start/${thread_id}`,
+                method:"GET",
+                success:function(e){
+                    alert("group payments has been started")
+                }
+            })
+            }
+            
+        })
+    }
 	$("#chat_message").focus(function(){
 
         document.querySelector("textarea").addEventListener("keyup", function(event) {

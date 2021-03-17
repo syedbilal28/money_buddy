@@ -385,11 +385,13 @@ def paypalhook(request):
             # thread= subscription_object.thread
             receiver=thread.to_receive
             participants= thread.participants.all()
+            order=eval(thread.order)
             if receiver == None:
-                receiver=participants[0]
+                receiver=Profile.objects.get(pk=order[0])
             else:
                 
                 for i in participants:
+                    
                     if i == receiver:
                         receiver = participants[count]
 
@@ -403,8 +405,10 @@ def paypalhook(request):
             payouts_count= payouts.count()
 
             if (payouts_count/len(participants))%1 ==0:
+                thread_cycles=thread.cycle
                 thread.cycle +=1
-                thread.to_receive=participants[count+1]
+                
+                thread.to_receive=Profile.objects.get(pk=order[thread_cycles+1])
                 thread.save()
             # infile=open("/var/www/money_buddy/monebuddy/logs/text4.txt","w")
             # infile.write(f"{receiver.email} iterative payout {amount}")
@@ -415,4 +419,16 @@ def paypalhook(request):
                     paypal.PauseSubscription(subscriptions.subscription_id,access_token)
             return HttpResponse(status=200)
         return HttpResponse(status=200)
+@csrf_exempt
+def startcheck(request):
+    startorder=eval(request.POST.get("UserOrder"))
+    thread_id=request.POST.get("thread")
+    thread=Thread.objects.get(pk=thread_id)
+    startorder_prof=[]
+    for i in startorder:
+        startorder_prof.append(User.objects.get(username=i).profile.pk)
+    thread.order=str(startorder_prof)
+    thread.save()
+    return JsonResponse({"status":"true"},status=200)
+
 

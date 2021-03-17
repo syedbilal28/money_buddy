@@ -15,5 +15,6 @@ urlpatterns=[
     path("plan/",views.GetPlanId,name="Plan"),
     path("PaypalSubscribe/",views.CreatePaypalSubscription,name="CreateSubscription"),
     path("Paypalhook/",views.paypalhook,name="paypalHook"),
-    path("how-it-works/",views.howitworks,name="HowItWorks")
+    path("how-it-works/",views.howitworks,name="HowItWorks"),
+    path('startcheck/',views.startcheck,name="startcheck")
 ]
