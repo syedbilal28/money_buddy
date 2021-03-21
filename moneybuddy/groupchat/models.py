@@ -92,7 +92,7 @@ class Thread(models.Model):
     monthly_charge=models.IntegerField(default=0)
     updated = models.DateTimeField(auto_now=True)
     timestamp = models.DateTimeField(auto_now_add=True)
-    product_id=models.CharField(max_length=30,blank=True)
+    product_id=models.CharField(max_length=30,blank=True,null=True)
     plan_id=models.CharField(max_length=30,blank=True,null=True)
     password=models.CharField(max_length=50,null=True)
     PRIVACY_CHOICES=[

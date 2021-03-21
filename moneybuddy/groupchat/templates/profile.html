@@ -1,0 +1,125 @@
+{% load static %}
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <title>Card Info</title>
+    <style>
+        .d-flex{
+            height: 100vh;
+            background-color: #f5f5f5;
+        }
+        
+        #form-div-wrapper{
+            /* padding: 110px; */
+            border-radius: 20px;
+            /* border:1px solid black; */
+            background-color: #D26450;
+            /* min-width: 400px; */
+            /* box-shadow: 10px 10px 10px; */
+            position: relative;
+        }
+        #form-div{
+            width: 100%;
+        }
+        .btn{
+            background-color: #D26450;
+            border:none;
+        }
+        .btn:hover{
+            background-color: #f5f5f5;
+            color: #D26450;
+            transition: 0.3s;
+        }
+        p,label{
+            color: #f5f5f5;
+        }
+        #profilepic_inp{
+    display: hidden;
+  }
+  #hidden {
+ width: 0px;
+ height: 0px;
+ overflow: hidden;
+}
+#change_pic_text{
+    color:white;
+    font-weight: 500;
+
+}
+#change_pic_text:hover{
+    cursor:pointer;
+    color:grey;
+}
+#edit_profile_pic{
+    max-width: 10rem;
+    max-height: 10rem;
+}
+    </style>
+</head>
+<body>
+    <!-- <div class="container"> -->
+        <div class="d-flex p-2 bd-highlight justify-content-center w-100">
+            <div id="form-div-wrapper" class="row justify-content align-self-center shadow p-4 mb-5 rounded w-50">
+                <div id="form-div">
+                    
+                    <form action="/UpdateProfile/" method="POST" id="profile_form" enctype="multipart/form-data">
+                        <input type="hidden" name="csrfmiddlewaretoken" value="uy28jGHLipEXpO182OpUFDHvn5tGi0PiY1xhcjCou0ftkf4Rf5FnEICClrKNhsxC">
+                        <div id="edit" class=".d-flex2 p-2">
+                          <div class="row justify-content-center p-2">
+                            
+                            <img src="{{ profile.profile_picture }}" alt="" id="edit_profile_pic">
+                            
+                          </div>
+                          <div class="row justify-content-center p-2">
+                            <a id="change_pic_text" onclick="changeprofilepic(event)">Change Profile Picture</a>
+                            <div id="hidden">
+                              <input type="file" name="profile_picture" id="profilepic_inp" onchange="showprofilepic(event)" accept="image/x-png,image/gif,image/jpeg,image/jpg">
+                            </div>
+                          </div>
+                          <div id="edit-form-holder" class="p-5">
+                            
+                              
+                              <div class="form-group">
+                                <label for="">First Name</label>
+                                <input type="text" class="form-control" name="firstname" value="">
+                              </div>
+                              <div class="form-group">
+                                <label for="">Last Name</label>
+                                <input type="text" class="form-control" name="lastname" value="">
+                              </div>
+                              <div class="form-group">
+                                <label for="">Email</label>
+                                <input type="email" class="form-control" name="email" value="">
+                              </div>
+                              <button class="btn btn-primary" type="submit" id="form_button">Save Changes</button>
+                               
+                         
+                               
+                          </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    <!-- </div> -->
+</body>
+<script>
+    function showprofilepic(e){
+      var ProfilePicture=document.getElementById("edit_profile_pic")
+      ProfilePicture.src= URL.createObjectURL(e.target.files[0]);
+      ProfilePicture.onload = function() {
+          URL.revokeObjectURL(ProfilePicture.src) // free memory
+        }
+    }
+    function changeprofilepic(e){
+      console.log("hello")
+      $("#profilepic_inp").trigger("click")     
+
+    }
+</script>
+</html>

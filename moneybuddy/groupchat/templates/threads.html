@@ -208,6 +208,9 @@
 	#limit-alert{
 	display:none;
 	}
+    .modal-dialog{
+        max-width: 600px;
+    }
     </style>
 </head>
 <body>
@@ -310,8 +313,18 @@
                             <input type="password" name="password" class="form-control">
                         </div>
                         <input type="hidden" id="payment-method" name='payment_method'>
-                        <button class="btn btn-outline-success" type="reset" onclick="return create_thread_stripe(event)">Create With Stripe</button>
-                        <button class="btn btn-outline-success" type="reset" onclick="return create_thread_paypal(event)">Create With Paypal</button>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <button class="btn btn-outline-success" type="reset" onclick="return create_thread_stripe(event)">Create With Stripe</button>
+                            </div>
+                            <div class="col-sm-4">
+                                <button class="btn btn-outline-success" type="reset" onclick="return create_thread_paypal(event)">Create With Paypal</button>
+                            </div>
+                            <div class="col-sm-4">
+                                <button class="btn btn-outline-success" type="reset" onclick="return create_thread_swish(event)">Create With Swish/Cash</button>
+                            </div>
+                        </div>
+                        
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -391,7 +404,7 @@
                             {% if thread.payment_method == "paypal" %}
                                 <i class="fab fa-cc-paypal" style="font-size: 50px;position: absolute;right: 80px;"></i>
                                 
-                            {% else %}
+                            {% elif thread.payment_method == "stripe" %}
                             <i class="fab fa-cc-stripe" style="font-size: 50px;position: absolute;right: 80px;"></i>
                             {% endif %}
                             <h3> Created by {{ thread.admin }}</h3>                
@@ -447,6 +460,41 @@
             document.querySelector("#threads").prepend(thread)
 	return thread
         }
+        function create_thread_swish(event){
+            $("#payment-method").val("swish")
+            // $("#thread-creation-form").submit()
+            var form = document.querySelector("#thread-creation-form")
+            var price= form.children[0].children[1].value
+	    if (price <= 4000 && price >=100){
+            var privacy = form.children[1].children[1].value
+            var password= form.children[2].children[1].value
+            var payment_method="swish"
+            $.ajax({
+                url:"{% url 'create-thread' %}",
+                method:"POST",
+                data:{
+                    "csrfmiddlewaretoken":"{{ csrf_token }}",
+                    "price": price,
+                    "privacy":privacy,
+                    "password":password,
+                    "payment_method":payment_method,
+                },
+                success:function(e){
+                    console.log(e,status)
+                   // CallHome()
+		//window.location="/home/"
+			setTimeout(function() {
+  //your code to be executed after 1 second
+}, 3000);
+			thread=MakeThread(e.thread)
+			
+			
+                    return false;
+                    }
+            
+        })}
+	$("#limit-alert").css("display","block")
+}
         function create_thread_paypal(event){
             $("#payment-method").val("paypal")
             // $("#thread-creation-form").submit()

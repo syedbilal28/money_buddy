@@ -14,7 +14,7 @@ import paypalrestsdk
 from paypalrestsdk import BillingPlan
 from hashlib import sha256
 import requests
-from .serializers import ThreadSerializerStart
+from .serializers import ThreadSerializerStart,ProfileSerializer
 import random
 from django.db.models import Count
 from . import paypal
@@ -126,7 +126,7 @@ def inbox(request,thread_id):
         profile=Profile.objects.get(user=request.user)
     except:
         return redirect('home')
-    if profile==thread_.admin and thread_.status=='N' and len(thread_.participants.all()) >3:
+    if profile==thread_.admin and thread_.status=='N' and len(thread_.participants.all()) >3 and thread_.payment_method != None:
         start_check=True
     else:
         start_check=False
@@ -177,7 +177,7 @@ def Create_Thread(request):
         payment_method=payment_method
     )
         thread_serialized=ThreadSerializerStart(thread_new).data
-    else:
+    elif payment_method == "paypal":
         print("PAYPALLL")
         req_id=request.user.username+str(random.randint(0,999999999))
         hashed_request_id=sha256(req_id.encode('utf-8')).hexdigest()
@@ -196,6 +196,18 @@ def Create_Thread(request):
             password=hashed_password
         )
         thread_serialized=ThreadSerializerStart(thread_new).data
+    else:
+
+        thread_new=Thread.objects.create(
+        admin=profile,
+        monthly_charge= thread_price,
+        privacy=thread_privacy,
+        password=hashed_password,
+        payment_method=payment_method
+        )
+        thread_new.participants.add(profile)
+        thread_serialized=ThreadSerializerStart(thread_new).data
+
     return JsonResponse({"message":"Success","thread":thread_serialized},status=200)
 @csrf_exempt
 def Join_Thread(request):
@@ -432,3 +444,9 @@ def startcheck(request):
     return JsonResponse({"status":"true"},status=200)
 
 
+def profile(request):
+    user=request.user
+    profile=user.profile
+    profile_data=ProfileSerializer(profile).data
+    context={"profile":profile_data}
+    return render(request,"profile.html",context)

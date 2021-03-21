@@ -9,7 +9,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     user=UserSerializer()
     class Meta:
         model=Profile
-        fields=['user']
+        fields=['user','profile_picture']
 class ThreadSerializer(serializers.Serializer):
     id = serializers.ReadOnlyField()
     first = UserSerializer()
