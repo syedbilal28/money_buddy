@@ -64,11 +64,11 @@
 <body>
     <!-- <div class="container"> -->
         <div class="d-flex p-2 bd-highlight justify-content-center w-100">
-            <div id="form-div-wrapper" class="row justify-content align-self-center shadow p-4 mb-5 rounded w-50">
+            <div id="form-div-wrapper" class="row justify-content align-self-center shadow  mb-5 rounded w-50">
                 <div id="form-div">
                     
-                    <form action="/UpdateProfile/" method="POST" id="profile_form" enctype="multipart/form-data">
-                        <input type="hidden" name="csrfmiddlewaretoken" value="uy28jGHLipEXpO182OpUFDHvn5tGi0PiY1xhcjCou0ftkf4Rf5FnEICClrKNhsxC">
+                    <form action="{% url 'profile' %}" method="POST" id="profile_form" enctype="multipart/form-data">
+                        {% csrf_token %}
                         <div id="edit" class=".d-flex2 p-2">
                           <div class="row justify-content-center p-2">
                             
@@ -81,20 +81,21 @@
                               <input type="file" name="profile_picture" id="profilepic_inp" onchange="showprofilepic(event)" accept="image/x-png,image/gif,image/jpeg,image/jpg">
                             </div>
                           </div>
-                          <div id="edit-form-holder" class="p-5">
+                          <div id="edit-form-holder" class="">
                             
                               
                               <div class="form-group">
                                 <label for="">First Name</label>
-                                <input type="text" class="form-control" name="firstname" value="">
+                                
+                                <input type="text" class="form-control" name="firstname" value="{{ profile.user.first_name }}">
                               </div>
                               <div class="form-group">
                                 <label for="">Last Name</label>
-                                <input type="text" class="form-control" name="lastname" value="">
+                                <input type="text" class="form-control" name="lastname" value="{{ profile.user.last_name }}">
                               </div>
                               <div class="form-group">
                                 <label for="">Email</label>
-                                <input type="email" class="form-control" name="email" value="">
+                                <input type="email" class="form-control" name="email" value="{{ profile.user.email }}">
                               </div>
                               <button class="btn btn-primary" type="submit" id="form_button">Save Changes</button>
                                

@@ -4,7 +4,7 @@ from .models import User,Thread,Profile
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model=User
-        fields=['id','username','first_name','last_name']
+        fields=['id','username','first_name','last_name',"email"]
 class ProfileSerializer(serializers.ModelSerializer):
     user=UserSerializer()
     class Meta:

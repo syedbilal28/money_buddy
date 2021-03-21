@@ -447,6 +447,22 @@ def startcheck(request):
 def profile(request):
     user=request.user
     profile=user.profile
+    if request.method == "POST":
+        print(request.POST)
+        profile_pic=request.FILES.get('profile_picture')
+        first_name=request.POST.get("firstname")
+        last_name=request.POST.get("lastname")
+        email=request.POST.get("email")
+        profile.profile_picture=profile_pic
+        user.first_name=first_name
+        user.last_name=last_name
+        user.email=email
+        user.save()
+        profile=profile.save()
+        user=request.user
+        profile=user.profile
+        
+
     profile_data=ProfileSerializer(profile).data
     context={"profile":profile_data}
     return render(request,"profile.html",context)
